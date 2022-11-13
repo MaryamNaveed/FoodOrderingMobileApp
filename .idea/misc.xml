@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/drawable/above_rounded.xml" value="0.134" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/drawable/card.xml" value="0.134" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/drawable/half_rounded.xml" value="0.134" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/drawable/ic_baseline_add_circle_outline_24.xml" value="0.134" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/drawable/ic_baseline_menu_24.xml" value="0.134" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/drawable/rounded_rectangle.xml" value="0.134" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_add_product.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_cart.xml" value="0.25" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_login_admin.xml" value="0.22" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_login_customer.xml" value="0.25" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_main_page_customer.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_main_page_restaurant.xml" value="0.22" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_ordered_items.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_previous_orders.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_product_detail.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_profile.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_signup_customer.xml" value="0.22" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_update_product.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_user_type.xml" value="0.21" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/cart_item_row.xml" value="0.25" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/customer_product_row.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/order_item_row.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/order_row.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/restaurant_product_row.xml" value="0.21" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
