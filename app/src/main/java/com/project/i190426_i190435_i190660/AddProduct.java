@@ -13,7 +13,7 @@ import android.widget.ImageView;
 
 public class AddProduct extends AppCompatActivity {
 
-    EditText name, quantity, price, description;
+    EditText name, price, description;
     ImageView image, back;
     Button update;
     Uri selectedImage= null;
@@ -23,7 +23,6 @@ public class AddProduct extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
         name=findViewById(R.id.name);
-        quantity=findViewById(R.id.quantity);
         price=findViewById(R.id.price);
         description=findViewById(R.id.description);
         image=findViewById(R.id.image);

@@ -50,7 +50,6 @@ public class MyAdapterCustomerProducts extends RecyclerView.Adapter<MyAdapterCus
                 Intent intent=new Intent(c, ProductDetail.class);
                 intent.putExtra("id", allProducts.get(position).getId());
                 intent.putExtra("name", allProducts.get(position).getName());
-                intent.putExtra("quantity", allProducts.get(position).getQuantity());
                 intent.putExtra("price", allProducts.get(position).getPrice());
                 intent.putExtra("image", allProducts.get(position).getImage());
                 intent.putExtra("description", allProducts.get(position).getDescription());

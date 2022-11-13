@@ -38,7 +38,6 @@ public class ProductDetail extends AppCompatActivity {
                 getIntent().getIntExtra("id", 0),
                 getIntent().getStringExtra("name"),
                 getIntent().getDoubleExtra("price", 0),
-                getIntent().getIntExtra("quantity", 0),
                 getIntent().getStringExtra("description"),
                 getIntent().getStringExtra("image"),
                 getIntent().getStringExtra("category"));

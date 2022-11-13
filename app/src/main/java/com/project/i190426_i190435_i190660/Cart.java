@@ -34,11 +34,11 @@ public class Cart extends AppCompatActivity {
         tax=findViewById(R.id.tax);
         total=findViewById(R.id.total);
 
-        cartItems.add(new CartItems(new Product(1, "Hamburger", 700, 20,
+        cartItems.add(new CartItems(new Product(1, "Hamburger", 700,
                 "A simple burger consisting of fillings—usually a patty of ground meat, typically beef—placed inside a sliced bun or bread roll.",
                 "burger", "Burger"), 5));
 
-        cartItems.add(new CartItems(new Product(5, "Vegetable Pizza", 1200, 20,
+        cartItems.add(new CartItems(new Product(5, "Vegetable Pizza", 1200,
                 "It has (almost) everything: roasted red peppers, baby spinach, onions, mushrooms, tomatoes, and black olives. It's also topped with three kinds of cheese — feta, provolone, and mozzarella — and sprinkled with garlic herb seasoning. It's an awesome way to eat your vegetables!",
                 "pizza", "Pizza"), 2));
 

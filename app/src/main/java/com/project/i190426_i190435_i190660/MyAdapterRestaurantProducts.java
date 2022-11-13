@@ -37,7 +37,6 @@ public class MyAdapterRestaurantProducts extends RecyclerView.Adapter<MyAdapterR
 
         holder.name.setText(allProducts.get(position).getName());
         holder.price.setText(String.valueOf(allProducts.get(position).getPrice()));
-        holder.quantity.setText(String.valueOf(allProducts.get(position).getQuantity()));
         holder.category.setText(String.valueOf(allProducts.get(position).getCategory()));
 
         int id=c.getResources().getIdentifier(allProducts.get(position).getImage(), "drawable", c.getPackageName());
@@ -50,7 +49,6 @@ public class MyAdapterRestaurantProducts extends RecyclerView.Adapter<MyAdapterR
                 Intent intent=new Intent(c, UpdateProduct.class);
                 intent.putExtra("id", allProducts.get(position).getId());
                 intent.putExtra("name", allProducts.get(position).getName());
-                intent.putExtra("quantity", allProducts.get(position).getQuantity());
                 intent.putExtra("price", allProducts.get(position).getPrice());
                 intent.putExtra("image", allProducts.get(position).getImage());
                 intent.putExtra("description", allProducts.get(position).getDescription());
@@ -75,7 +73,7 @@ public class MyAdapterRestaurantProducts extends RecyclerView.Adapter<MyAdapterR
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView name, price, quantity, category;
+        TextView name, price,category;
         ImageView image;
         ImageButton update, delete;
         public MyViewHolder(@NonNull View itemView) {
@@ -83,7 +81,6 @@ public class MyAdapterRestaurantProducts extends RecyclerView.Adapter<MyAdapterR
 
             name=itemView.findViewById(R.id.name);
             price=itemView.findViewById(R.id.price);
-            quantity=itemView.findViewById(R.id.quantity);
             category=itemView.findViewById(R.id.category);
             image=itemView.findViewById(R.id.image);
             update=itemView.findViewById(R.id.update);
