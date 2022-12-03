@@ -232,6 +232,7 @@ public class AddProduct extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(AddProduct.this);
         queue.add(request);
+        
 
     }
 
