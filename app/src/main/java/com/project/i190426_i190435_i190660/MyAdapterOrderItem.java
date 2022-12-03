@@ -32,10 +32,10 @@ public class MyAdapterOrderItem extends RecyclerView.Adapter<MyAdapterOrderItem.
     @Override
     public void onBindViewHolder(@NonNull MyAdapterOrderItem.MyViewHolder holder, int position) {
         holder.name.setText(orderedItems.get(position).getP().getName());
-        holder.price.setText("Rs. "+String.valueOf(orderedItems.get(position).getP().getPrice()));
+        holder.price.setText("Rs. "+String.valueOf(orderedItems.get(position).getPrice()));
         holder.quantity.setText("Qty: "+String.valueOf(orderedItems.get(position).getQuantity()));
 
-        int id=c.getResources().getIdentifier(orderedItems.get(position).getP().getImage(), "drawable", c.getPackageName());
+        int id=c.getResources().getIdentifier(orderedItems.get(position).getP().getPhoto(), "drawable", c.getPackageName());
 
         holder.image.setImageResource(id);
     }

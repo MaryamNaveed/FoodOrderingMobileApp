@@ -27,23 +27,31 @@ public class PreviousOrders extends AppCompatActivity {
 
         List<OrderItem> cartItems1=new ArrayList<>();
 
-        cartItems1.add(new OrderItem(new Product(1, "Hamburger", 700,
+        Product p1=new Product(1, "Hamburger", 700,
                 "A simple burger consisting of fillings—usually a patty of ground meat, typically beef—placed inside a sliced bun or bread roll.",
-                "burger", "Burger"), 5));
+                "burger", "Burger");
 
-        cartItems1.add(new OrderItem(new Product(5, "Vegetable Pizza", 1200,
+        cartItems1.add(new OrderItem(p1, 5, p1.price));
+
+        Product p2=new Product(5, "Vegetable Pizza", 1200,
                 "It has (almost) everything: roasted red peppers, baby spinach, onions, mushrooms, tomatoes, and black olives. It's also topped with three kinds of cheese — feta, provolone, and mozzarella — and sprinkled with garlic herb seasoning. It's an awesome way to eat your vegetables!",
-                "pizza", "Pizza"), 2));
+                "pizza", "Pizza");
+
+        cartItems1.add(new OrderItem(p2, 2, p2.price));
 
         List<OrderItem> cartItems2=new ArrayList<>();
 
-        cartItems2.add(new OrderItem(new Product(6, "Chicken Biryani", 900,
+        Product p3=new Product(6, "Chicken Biryani", 900,
                 "A savory chicken and rice dish that includes layers of chicken, rice, and aromatics that are steamed together. The bottom layer of rice absorbs all the chicken juices as it cooks, giving it a tender texture and rich flavor, while the top layer of rice turns out white and fluffy.", "biryani",
-                "Rice"), 5));
+                "Rice");
 
-        cartItems2.add(new OrderItem(new Product(5, "Vegetable Pizza", 1200,
+        cartItems2.add(new OrderItem(p3, 5, p3.price));
+
+        Product p4=new Product(5, "Vegetable Pizza", 1200,
                 "It has (almost) everything: roasted red peppers, baby spinach, onions, mushrooms, tomatoes, and black olives. It's also topped with three kinds of cheese — feta, provolone, and mozzarella — and sprinkled with garlic herb seasoning. It's an awesome way to eat your vegetables!",
-                "pizza", "Pizza"), 2));
+                "pizza", "Pizza");
+
+        cartItems2.add(new OrderItem(p4, 2, p4.price));
 
         orders=new ArrayList<>();
 

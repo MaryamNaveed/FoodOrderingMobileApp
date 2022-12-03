@@ -45,7 +45,7 @@ public class ProductDetail extends AppCompatActivity {
         name.setText(product.getName());
         price.setText("Rs. "+String.valueOf(product.getPrice()));
         description.setText(product.getDescription());
-        int id=getResources().getIdentifier(product.getImage(), "drawable", getPackageName());
+        int id=getResources().getIdentifier(product.getPhoto(), "drawable", getPackageName());
         image.setImageResource(id);
 
         back.setOnClickListener(new View.OnClickListener() {

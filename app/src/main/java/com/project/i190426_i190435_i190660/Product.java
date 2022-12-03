@@ -5,16 +5,16 @@ import java.io.Serializable;
 public class Product implements Serializable {
 
     int id;
-    String name, description, image, category;
+    String name, description, photo, category;
 
     double price;
 
-    public Product(int id, String name, double price, String description, String image, String category) {
+    public Product(int id, String name, double price, String description, String photo, String category) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
-        this.image = image;
+        this.photo = photo;
         this.category=category;
     }
 
@@ -51,12 +51,12 @@ public class Product implements Serializable {
         this.description = description;
     }
 
-    public String getImage() {
-        return image;
+    public String getPhoto() {
+        return photo;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 
     public String getCategory() {

@@ -1,5 +1,6 @@
 package com.project.i190426_i190435_i190660;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -33,11 +34,11 @@ public class MyAdapterOrder extends RecyclerView.Adapter<MyAdapterOrder.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyAdapterOrder.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyAdapterOrder.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         holder.date.setText(orders.get(position).getDate());
         double total=0;
         for(int i=0; i<orders.get(position).getOrderItemList().size(); i++){
-            total+=orders.get(position).getOrderItemList().get(i).getQuantity()*orders.get(position).getOrderItemList().get(i).getP().getPrice();
+            total+=orders.get(position).getOrderItemList().get(i).getQuantity()*orders.get(position).getOrderItemList().get(i).getPrice();
         }
 
         total+=orders.get(position).getTax();

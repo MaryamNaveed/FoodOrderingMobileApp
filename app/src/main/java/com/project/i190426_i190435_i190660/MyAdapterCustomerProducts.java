@@ -3,6 +3,7 @@ package com.project.i190426_i190435_i190660;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -40,9 +43,12 @@ public class MyAdapterCustomerProducts extends RecyclerView.Adapter<MyAdapterCus
         holder.price.setText(String.valueOf(allProducts.get(position).getPrice()));
 
 
-        int id=c.getResources().getIdentifier(allProducts.get(position).getImage(), "drawable", c.getPackageName());
+//        int id=c.getResources().getIdentifier(allProducts.get(position).getPhoto(), "drawable", c.getPackageName());
+//
+//        holder.image.setImageResource(id);
 
-        holder.image.setImageResource(id);
+        Picasso.get().load(Uri.parse(Ip.ipAdd+"/"+allProducts.get(position).getPhoto())).into(holder.image);
+
 
         holder.add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +57,7 @@ public class MyAdapterCustomerProducts extends RecyclerView.Adapter<MyAdapterCus
                 intent.putExtra("id", allProducts.get(position).getId());
                 intent.putExtra("name", allProducts.get(position).getName());
                 intent.putExtra("price", allProducts.get(position).getPrice());
-                intent.putExtra("image", allProducts.get(position).getImage());
+                intent.putExtra("image", allProducts.get(position).getPhoto());
                 intent.putExtra("description", allProducts.get(position).getDescription());
                 intent.putExtra("category", allProducts.get(position).getCategory());
                 c.startActivity(intent);

@@ -80,7 +80,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight=".12">
+            android:layout_weight=".10">
 
             <EditText
                 android:id="@+id/search"
@@ -98,7 +98,41 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight=".81">
+                android:layout_weight=".04"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+
+                    <TextView
+                        android:id="@+id/offline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="You are offline..."
+                        android:textColor="#2196F3"
+                        >
+
+                    </TextView>
+
+                    <TextView
+                        android:id="@+id/refresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Refresh"
+                        android:textColor="#3F51B5"
+                        >
+
+                    </TextView>
+
+
+
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".79">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv"

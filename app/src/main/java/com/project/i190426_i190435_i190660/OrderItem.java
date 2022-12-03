@@ -5,10 +5,12 @@ import java.io.Serializable;
 public class OrderItem implements Serializable {
     Product p;
     int quantity;
+    double price;
 
-    public OrderItem(Product p, int quantity) {
+    public OrderItem(Product p, int quantity, double price) {
         this.p = p;
         this.quantity = quantity;
+        this.price=price;
     }
 
     public Product getP() {
@@ -25,5 +27,13 @@ public class OrderItem implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

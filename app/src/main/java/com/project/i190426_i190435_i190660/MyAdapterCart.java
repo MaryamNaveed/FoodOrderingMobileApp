@@ -37,7 +37,7 @@ public class MyAdapterCart extends RecyclerView.Adapter<MyAdapterCart.MyViewHold
         holder.quantity.setText(String.valueOf(list.get(position).getQuantity()));
         holder.totalPrice.setText("Rs. "+String.valueOf(list.get(position).getP().getPrice()*list.get(position).getQuantity()));
 
-        int id=c.getResources().getIdentifier(list.get(position).getP().getImage(), "drawable", c.getPackageName());
+        int id=c.getResources().getIdentifier(list.get(position).getP().getPhoto(), "drawable", c.getPackageName());
 
         holder.image.setImageResource(id);
 
