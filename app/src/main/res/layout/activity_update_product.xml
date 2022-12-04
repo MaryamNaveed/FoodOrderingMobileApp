@@ -101,7 +101,7 @@
             android:backgroundTint="#D1D1D1"
             android:textColor="#FF5722"
             android:textColorHint="#FF5722"
-            android:padding="15dp">
+            android:paddingHorizontal="15dp">
 
         </EditText>
     </LinearLayout>
@@ -121,7 +121,7 @@
             android:backgroundTint="#D1D1D1"
             android:textColor="#FF5722"
             android:textColorHint="#FF5722"
-            android:padding="15dp">
+            android:paddingHorizontal="15dp">
 
         </EditText>
     </LinearLayout>
@@ -143,7 +143,7 @@
             android:backgroundTint="#D1D1D1"
             android:textColor="#FF5722"
             android:textColorHint="#FF5722"
-            android:padding="15dp">
+            android:paddingHorizontal="15dp">
 
         </EditText>
     </LinearLayout>
@@ -163,7 +163,7 @@
             android:backgroundTint="#D1D1D1"
             android:textColor="#FF5722"
             android:textColorHint="#FF5722"
-            android:padding="15dp">
+            android:paddingHorizontal="15dp">
 
         </EditText>
     </LinearLayout>

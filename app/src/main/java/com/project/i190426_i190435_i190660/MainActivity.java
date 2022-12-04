@@ -29,10 +29,15 @@ public class MainActivity extends AppCompatActivity {
         if(mPref.getBoolean("loggedInAdmin", false)){
             Intent intent=new Intent(MainActivity.this, MainPageRestaurant.class);
             startActivity(intent);
+
+            finish();
+
         }
         else if(mPref.getBoolean("loggedInCustomer", false)){
             Intent intent=new Intent(MainActivity.this, MainPageCustomer.class);
             startActivity(intent);
+
+            finish();
         }
 
         restaurant.setOnClickListener(new View.OnClickListener() {

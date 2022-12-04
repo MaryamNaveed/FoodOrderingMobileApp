@@ -99,7 +99,7 @@
                 android:backgroundTint="#FFF"
                 android:textColor="#FF5722"
                 android:textColorHint="#FF5722"
-                android:padding="15dp">
+                android:paddingHorizontal="15dp">
 
             </EditText>
         </LinearLayout>
@@ -119,7 +119,7 @@
                 android:backgroundTint="#FFF"
                 android:hint="Password"
                 android:inputType="textPassword"
-                android:padding="15dp"
+                android:paddingHorizontal="15dp"
                 android:textColor="#FF5722"
                 android:textColorHint="#FF5722">
 

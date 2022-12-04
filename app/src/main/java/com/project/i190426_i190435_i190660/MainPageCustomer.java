@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -48,6 +49,8 @@ public class MainPageCustomer extends AppCompatActivity {
     DrawerLayout drawer;
     RecyclerView rv;
     EditText search;
+    SharedPreferences mPref;
+    SharedPreferences.Editor editmPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,8 @@ public class MainPageCustomer extends AppCompatActivity {
         drawer=findViewById(R.id.drawer);
         rv=findViewById(R.id.rv);
         search=findViewById(R.id.search);
+        mPref=getSharedPreferences("com.project.i190426_i190435_i190660", MODE_PRIVATE);
+        editmPref=mPref.edit();
 
 
 
@@ -148,6 +153,9 @@ public class MainPageCustomer extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                editmPref.putBoolean("loggedInCustomer", false);
+                editmPref.apply();
+                editmPref.commit();
                 Intent intent=new Intent(MainPageCustomer.this, MainActivity.class);
                 startActivity(intent);
             }

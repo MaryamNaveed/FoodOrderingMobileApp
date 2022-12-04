@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -81,24 +82,7 @@ public class MyAdapterRestaurantProducts extends RecyclerView.Adapter<MyAdapterR
             }
         });
 
-        holder.delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
-                NetworkInfo nInfo = cm.getActiveNetworkInfo();
-                boolean connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
-                if(connected){
-                    int idd=allProducts.get(position).getId();
-                    deleteProduct(idd);
-                    allProducts.remove(position);
-                    notifyDataSetChanged();
-                }
-                else {
-                    Toast.makeText(c, "You are offline", Toast.LENGTH_LONG).show();
-                }
 
-            }
-        });
 
     }
 
@@ -163,7 +147,10 @@ public class MyAdapterRestaurantProducts extends RecyclerView.Adapter<MyAdapterR
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView name, price,category;
         ImageView image;
-        ImageButton update, delete;
+//        ImageButton update, delete;
+
+        Button update;
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -172,7 +159,7 @@ public class MyAdapterRestaurantProducts extends RecyclerView.Adapter<MyAdapterR
             category=itemView.findViewById(R.id.category);
             image=itemView.findViewById(R.id.image);
             update=itemView.findViewById(R.id.update);
-            delete=itemView.findViewById(R.id.delete);
+//            delete=itemView.findViewById(R.id.delete);
 
 
         }

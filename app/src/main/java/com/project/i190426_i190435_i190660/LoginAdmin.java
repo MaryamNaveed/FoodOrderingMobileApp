@@ -99,6 +99,7 @@ public class LoginAdmin extends AppCompatActivity {
                                                                 editmPref.commit();
                                                                 Intent intent=new Intent(LoginAdmin.this, MainPageRestaurant.class);
                                                                 startActivity(intent);
+                                                                finish();
                                                             }
                                                             else {
                                                                 Toast.makeText(LoginAdmin.this, res1.get("reqmsg").toString(), Toast.LENGTH_LONG).show();

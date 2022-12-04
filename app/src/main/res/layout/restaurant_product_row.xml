@@ -88,27 +88,39 @@
         android:layout_height="wrap_content">
 
 
-        <ImageButton
+        <Button
             android:id="@+id/update"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
+            android:layout_marginVertical="10dp"
+            android:text="Update"
+            android:textColor="#FFF"
             android:layout_centerInParent="true"
-            android:backgroundTint="#FF5722"
-            android:src="@drawable/ic_baseline_update_24">
+            android:background="#EE5722"/>
 
-        </ImageButton>
 
-        <ImageButton
-            android:id="@+id/delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_baseline_delete_24"
-            android:backgroundTint="#FF5722"
-            android:layout_centerInParent="true"
-            android:layout_alignParentEnd="true">
 
-        </ImageButton>
+<!--        <ImageButton-->
+<!--            android:id="@+id/update"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentStart="true"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            android:backgroundTint="#FF5722"-->
+<!--            android:src="@drawable/ic_baseline_update_24">-->
+
+<!--        </ImageButton>-->
+
+<!--        <ImageButton-->
+<!--            android:id="@+id/delete"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:src="@drawable/ic_baseline_delete_24"-->
+<!--            android:backgroundTint="#FF5722"-->
+<!--            android:layout_centerInParent="true"-->
+<!--            android:layout_alignParentEnd="true">-->
+
+<!--        </ImageButton>-->
 
     </RelativeLayout>
 
