@@ -45,7 +45,7 @@ public class MainPageCustomer extends AppCompatActivity {
     MyAdapterCustomerProducts adapter;
 
     ImageView cart, menu;
-    TextView logout, profile, prevOrders, cartItems;
+    TextView logout, profile, prevOrders, cartItems,  offline, refresh;
     DrawerLayout drawer;
     RecyclerView rv;
     EditText search;
@@ -71,6 +71,8 @@ public class MainPageCustomer extends AppCompatActivity {
         search=findViewById(R.id.search);
         mPref=getSharedPreferences("com.project.i190426_i190435_i190660", MODE_PRIVATE);
         editmPref=mPref.edit();
+        offline=findViewById(R.id.offline);
+        refresh=findViewById(R.id.refresh);
 
 
 
@@ -168,6 +170,15 @@ public class MainPageCustomer extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(MainPageCustomer.this, MainPageCustomer.class);
+                finish();
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -175,17 +186,20 @@ public class MainPageCustomer extends AppCompatActivity {
         super.onResume();
 
 
-        ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo nInfo = cm.getActiveNetworkInfo();
-        boolean connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+
+        boolean connected = Ip.isConnected(getApplicationContext());
 
 
 
         if(connected){
+            offline.setText("");
+            refresh.setText("");
             loadProductsfromPhp();
 
         }
         else{
+            offline.setText("You are Offline...");
+            refresh.setText("Refresh");
             Toast.makeText(MainPageCustomer.this, "You are offline", Toast.LENGTH_LONG).show();
             loadProductsfromSQlite();
         }

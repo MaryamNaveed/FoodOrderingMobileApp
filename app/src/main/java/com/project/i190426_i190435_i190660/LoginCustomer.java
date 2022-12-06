@@ -86,7 +86,7 @@ public class LoginCustomer extends AppCompatActivity {
 
                                         int idUser=res.getInt("id");
 
-                                        StringRequest request = new StringRequest(Request.Method.POST, Ip.ipAdd + "/updateAdminDeviceId.php",
+                                        StringRequest request = new StringRequest(Request.Method.POST, Ip.ipAdd + "/updateCustomerDeviceId.php",
                                                 new Response.Listener<String>() {
                                                     @Override
                                                     public void onResponse(String response) {
@@ -95,15 +95,74 @@ public class LoginCustomer extends AppCompatActivity {
                                                             JSONObject res1 = new JSONObject(response);
 
                                                             if(res1.getInt("reqcode")==1){
-                                                                Toast.makeText(LoginCustomer.this, "Signed In", Toast.LENGTH_LONG).show();
-                                                                editmPref.putBoolean("loggedInAdmin", false);
-                                                                editmPref.putBoolean("loggedInCustomer", true);
-                                                                editmPref.putInt("id", idUser);
-                                                                editmPref.apply();
-                                                                editmPref.commit();
-                                                                Intent intent=new Intent(LoginCustomer.this, MainPageCustomer.class);
-                                                                startActivity(intent);
-                                                                finish();
+                                                                StringRequest request = new StringRequest(Request.Method.POST, Ip.ipAdd + "/updateAdminDeviceId.php",
+                                                                        new Response.Listener<String>() {
+                                                                            @Override
+                                                                            public void onResponse(String response) {
+
+                                                                                try {
+                                                                                    JSONObject res1 = new JSONObject(response);
+
+                                                                                    if(res1.getInt("reqcode")==1){
+                                                                                        Toast.makeText(LoginCustomer.this, "Signed In", Toast.LENGTH_LONG).show();
+                                                                                        editmPref.putBoolean("loggedInAdmin", false);
+                                                                                        editmPref.putBoolean("loggedInCustomer", true);
+                                                                                        editmPref.putInt("id", idUser);
+                                                                                        editmPref.apply();
+                                                                                        editmPref.commit();
+                                                                                        Intent intent=new Intent(LoginCustomer.this, MainPageCustomer.class);
+                                                                                        startActivity(intent);
+                                                                                        finish();
+                                                                                    }
+                                                                                    else {
+                                                                                        Toast.makeText(LoginCustomer.this, res1.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                                                                                    }
+                                                                                } catch (JSONException e) {
+                                                                                    e.printStackTrace();
+                                                                                    Toast.makeText(LoginCustomer.this, "Cannot Parse JSON", Toast.LENGTH_LONG).show();
+                                                                                }
+
+
+
+                                                                            }
+                                                                        },
+                                                                        new Response.ErrorListener() {
+                                                                            @Override
+                                                                            public void onErrorResponse(VolleyError error) {
+                                                                                Toast.makeText(LoginCustomer.this, "Connection Error", Toast.LENGTH_LONG).show();
+                                                                                Toast.makeText(LoginCustomer.this, error.toString(), Toast.LENGTH_LONG).show();
+
+                                                                            }
+                                                                        }){
+                                                                    @Nullable
+                                                                    @Override
+                                                                    protected Map<String, String> getParams() throws AuthFailureError {
+                                                                        Map<String, String> params = new HashMap<>();
+
+                                                                        if(OneSignal.getDeviceState()==null){
+                                                                            params.put("id", String.valueOf(idUser));
+                                                                            params.put("deviceId", "");
+
+                                                                        }
+                                                                        else if(OneSignal.getDeviceState().getUserId()==null){
+                                                                            params.put("id", String.valueOf(idUser));
+                                                                            params.put("deviceId", "");
+                                                                        }
+                                                                        else{
+                                                                            params.put("id", String.valueOf(idUser));
+                                                                            params.put("deviceId", OneSignal.getDeviceState().getUserId());
+
+                                                                        }
+
+
+
+                                                                        return params;
+                                                                    }
+                                                                };
+
+                                                                RequestQueue queue = Volley.newRequestQueue(LoginCustomer.this);
+                                                                queue.add(request);
+
                                                             }
                                                             else {
                                                                 Toast.makeText(LoginCustomer.this, res1.get("reqmsg").toString(), Toast.LENGTH_LONG).show();

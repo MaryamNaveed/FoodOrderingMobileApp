@@ -176,9 +176,7 @@ public class MainPageRestaurant extends AppCompatActivity {
         allProducts.clear();
         allSearchProducts.clear();
 
-        ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo nInfo = cm.getActiveNetworkInfo();
-        boolean connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+        boolean connected=Ip.isConnected(getApplicationContext());
 
         if(connected){
             offline.setText("");
