@@ -108,15 +108,40 @@
 
         </TextView>
 
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="abc"
-            android:textSize="18dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="abc"
+                android:textSize="18dp">
 
-        </TextView>
+            </TextView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="right">
+                <ImageButton
+                    android:id="@+id/editname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:src="@drawable/ic_baseline_edit_24">
+
+                </ImageButton>
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
 
     </LinearLayout>
 
@@ -137,15 +162,39 @@
 
         </TextView>
 
-        <TextView
-            android:id="@+id/email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:text="abc@gmail.com"
-            android:textSize="18dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="abc@gmail.com"
+                android:textSize="18dp">
 
-        </TextView>
+            </TextView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="right">
+                <ImageButton
+                    android:id="@+id/editemail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:src="@drawable/ic_baseline_edit_24">
+
+                </ImageButton>
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
 
     </LinearLayout>
 
@@ -166,15 +215,39 @@
 
         </TextView>
 
-        <TextView
-            android:id="@+id/phone"
-            android:padding="5dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="03331234567"
-            android:textSize="18dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="03331234567"
+                android:textSize="18dp">
 
-        </TextView>
+            </TextView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="right">
+                <ImageButton
+                    android:id="@+id/editphone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:src="@drawable/ic_baseline_edit_24">
+
+                </ImageButton>
+
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
 
     </LinearLayout>
 

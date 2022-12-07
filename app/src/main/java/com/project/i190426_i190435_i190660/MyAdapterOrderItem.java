@@ -1,6 +1,7 @@
 package com.project.i190426_i190435_i190660;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -35,9 +38,11 @@ public class MyAdapterOrderItem extends RecyclerView.Adapter<MyAdapterOrderItem.
         holder.price.setText("Rs. "+String.valueOf(orderedItems.get(position).getPrice()));
         holder.quantity.setText("Qty: "+String.valueOf(orderedItems.get(position).getQuantity()));
 
-        int id=c.getResources().getIdentifier(orderedItems.get(position).getP().getPhoto(), "drawable", c.getPackageName());
+//        int id=c.getResources().getIdentifier(orderedItems.get(position).getP().getPhoto(), "drawable", c.getPackageName());
+//
+//        holder.image.setImageResource(id);
 
-        holder.image.setImageResource(id);
+        Picasso.get().load(Uri.parse(Ip.ipAdd+"/"+orderedItems.get(position).getP().getPhoto())).into(holder.image);
     }
 
     @Override

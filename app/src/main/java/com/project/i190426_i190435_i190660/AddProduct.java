@@ -85,12 +85,12 @@ public class AddProduct extends AppCompatActivity {
                     Toast.makeText(AddProduct.this, "Please select an image", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    ConnectivityManager cm = (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-                    NetworkInfo nInfo = cm.getActiveNetworkInfo();
-                    boolean connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
+
+                    boolean connected = Ip.isConnected(getApplicationContext());
 
                     if(connected){
                         uploadImageandDatatophp();
+                        uploadImageandDatatoSqlite();
                     }
                     else {
                         Toast.makeText(AddProduct.this, "You are offline", Toast.LENGTH_LONG).show();
@@ -100,6 +100,10 @@ public class AddProduct extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    public void uploadImageandDatatoSqlite(){
 
     }
 

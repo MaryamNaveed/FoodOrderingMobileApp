@@ -199,6 +199,16 @@
                 android:layout_height="0dp"
                 android:layout_weight=".35">
 
+                <TextView
+                    android:id="@+id/orders"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".1"
+                    android:layout_marginLeft="10dp"
+                    android:text="Orders"
+                    android:textSize="18dp"
+                    android:textColor="#FFF" />
+
             </LinearLayout>
 
 

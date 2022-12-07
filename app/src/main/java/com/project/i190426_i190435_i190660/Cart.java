@@ -82,7 +82,15 @@ public class Cart extends AppCompatActivity {
         checkout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                placeOrder();
+
+                if(cartItems.size()<=0){
+                    Toast.makeText(Cart.this, "No Items to order", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    placeOrder();
+                }
+
+
 
             }
         });
@@ -112,6 +120,8 @@ public class Cart extends AppCompatActivity {
 
                                     Intent intent=new Intent(Cart.this, MainPageCustomer.class);
                                     startActivity(intent);
+
+                                    finish();
 
 
 
@@ -538,11 +548,11 @@ public class Cart extends AppCompatActivity {
                                     try {
                                         JSONObject object1 = new JSONObject("{ " +
                                                 "'include_player_ids': [" + u.getString("deviceId") + "]," +
-                                                "'contents': { 'en': '" + "New Order" + "' }," +
+                                                "'contents': { 'en': '" + "A new order has been placed" + "' }," +
                                                 "'headers': { 'en': 'Order' }" +
                                                 " }");
 
-                                        Toast.makeText(Cart.this,  u.getString("deviceId"),Toast.LENGTH_LONG).show();
+//                                        Toast.makeText(Cart.this,  u.getString("deviceId"),Toast.LENGTH_LONG).show();
 
                                         OneSignal.postNotification(object1, new OneSignal.PostNotificationResponseHandler() {
                                             @Override
@@ -602,7 +612,7 @@ public class Cart extends AppCompatActivity {
         };
 
         RequestQueue queue = Volley.newRequestQueue(Cart.this);
-        queue1.add(request);
+        queue.add(request);
 
 
 

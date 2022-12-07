@@ -21,6 +21,7 @@
         <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_previous_orders.xml" value="0.17074275362318841" />
         <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_product_detail.xml" value="0.17074275362318841" />
         <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_profile.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_restaurant_orders.xml" value="0.159375" />
         <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_signup_customer.xml" value="0.22" />
         <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_update_product.xml" value="0.17074275362318841" />
         <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/activity_user_type.xml" value="0.21" />
@@ -28,6 +29,8 @@
         <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/customer_product_row.xml" value="0.17074275362318841" />
         <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/order_item_row.xml" value="0.17074275362318841" />
         <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/order_row.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/pop_up_edit.xml" value="0.17074275362318841" />
+        <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/restaurant_order_row.xml" value="0.17074275362318841" />
         <entry key="..\:/7thSemester/Smd/Project/I190426_I190435_I190660/app/src/main/res/layout/restaurant_product_row.xml" value="0.21" />
       </map>
     </option>

@@ -5,14 +5,18 @@ import java.util.List;
 
 public class Order implements Serializable {
 
+    int id;
     List<OrderItem> orderItemList;
     String date;
     double tax;
+    String status;
 
-    public Order(List<OrderItem> orderItemList, String date, double tax) {
+    public Order(int id, List<OrderItem> orderItemList, String date, double tax, String status) {
+        this.id=id;
         this.orderItemList = orderItemList;
         this.date=date;
         this.tax=tax;
+        this.status=status;
     }
 
     public String getDate() {
@@ -37,5 +41,21 @@ public class Order implements Serializable {
 
     public void setTax(double tax) {
         this.tax = tax;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

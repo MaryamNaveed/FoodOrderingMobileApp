@@ -6,35 +6,15 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\PTCL\.android\avd\Pixel_XL_API_33_2.avd" />
+            <type value="SERIAL_NUMBER" />
+            <value value="R9JN419W69J" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <targetSelectedWithDropDown>
-      <Target>
-        <type value="QUICK_BOOT_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\PTCL\.android\avd\Pixel_XL_API_33_2.avd" />
-          </Key>
-        </deviceKey>
-      </Target>
-    </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-12-06T18:43:11.916010400Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-12-07T10:33:57.840165500Z" />
     <multipleDevicesSelectedInDropDown value="true" />
     <runningDeviceTargetsSelectedWithDialog>
-      <Target>
-        <type value="RUNNING_DEVICE_TARGET" />
-        <deviceKey>
-          <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\PTCL\.android\avd\Pixel_XL_API_33_2.avd" />
-          </Key>
-        </deviceKey>
-      </Target>
       <Target>
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
@@ -51,7 +31,7 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\PTCL\.android\avd\Pixel_XL_API_33_2.avd" />
+            <value value="C:\Users\PTCL\.android\avd\Pixel_5_API_33_4.avd" />
           </Key>
         </deviceKey>
       </Target>

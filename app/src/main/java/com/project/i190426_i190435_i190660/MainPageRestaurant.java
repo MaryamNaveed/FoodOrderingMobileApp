@@ -46,7 +46,7 @@ public class MainPageRestaurant extends AppCompatActivity {
     MyAdapterRestaurantProducts adapter;
 
     ImageView add, menu;
-    TextView addProduct, logout, refresh, offline;
+    TextView addProduct, logout, refresh, offline, orders;
     DrawerLayout drawer;
     RecyclerView rv;
     SharedPreferences mPref;
@@ -68,6 +68,7 @@ public class MainPageRestaurant extends AppCompatActivity {
         logout=findViewById(R.id.logout);
         drawer=findViewById(R.id.drawer);
         rv=findViewById(R.id.rv);
+        orders=findViewById(R.id.orders);
         mPref=getSharedPreferences("com.project.i190426_i190435_i190660", MODE_PRIVATE);
         editmPref=mPref.edit();
 
@@ -162,6 +163,15 @@ public class MainPageRestaurant extends AppCompatActivity {
             }
         });
 
+        orders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(MainPageRestaurant.this, RestaurantOrders.class);
+                startActivity(intent);
+
+            }
+        });
+
 
 
     }
@@ -238,12 +248,16 @@ public class MainPageRestaurant extends AppCompatActivity {
             offline.setText("You are Offline...");
             refresh.setText("Refresh");
             Toast.makeText(MainPageRestaurant.this, "You are offline", Toast.LENGTH_LONG).show();
+            loadProductsfromSQlite();
         }
 
 
 
 
 
+
+    }
+    public void loadProductsfromSQlite(){
 
     }
 }

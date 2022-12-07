@@ -28,12 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PreviousOrders extends AppCompatActivity {
+public class RestaurantOrders extends AppCompatActivity {
 
     ImageView back;
     RecyclerView rv;
     List<Order> orders;
-    MyAdapterOrder adapter;
+    MyAdapterRestaurantOrder adapter;
 
     SharedPreferences mPref;
     SharedPreferences.Editor editmPref;
@@ -41,7 +41,7 @@ public class PreviousOrders extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_previous_orders);
+        setContentView(R.layout.activity_restaurant_orders);
         back=findViewById(R.id.back);
         rv=findViewById(R.id.rv);
 
@@ -82,9 +82,9 @@ public class PreviousOrders extends AppCompatActivity {
 //        orders.add(new Order(cartItems1, "25 July 2022", 20));
 //        orders.add(new Order(cartItems2, "25 August 2022", 20));
 
-        adapter=new MyAdapterOrder(orders, PreviousOrders.this);
+        adapter=new MyAdapterRestaurantOrder(orders, RestaurantOrders.this);
         rv.setAdapter(adapter);
-        RecyclerView.LayoutManager lm=new LinearLayoutManager(PreviousOrders.this);
+        RecyclerView.LayoutManager lm=new LinearLayoutManager(RestaurantOrders.this);
         rv.setLayoutManager(lm);
 
         back.setOnClickListener(new View.OnClickListener() {
@@ -100,7 +100,7 @@ public class PreviousOrders extends AppCompatActivity {
         super.onResume();
 
         StringRequest request = new StringRequest(Request.Method.POST,
-                Ip.ipAdd + "/getOrderCust.php",
+                Ip.ipAdd + "/getOrders.php",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -162,7 +162,7 @@ public class PreviousOrders extends AppCompatActivity {
 
 
                                                                                     } else {
-                                                                                        Toast.makeText(PreviousOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                                                                                        Toast.makeText(RestaurantOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
                                                                                     }
                                                                                 }
                                                                                 catch (Exception e){
@@ -177,8 +177,8 @@ public class PreviousOrders extends AppCompatActivity {
                                                                         new Response.ErrorListener() {
                                                                             @Override
                                                                             public void onErrorResponse(VolleyError error) {
-                                                                                Toast.makeText(PreviousOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
-                                                                                Toast.makeText(PreviousOrders.this, error.toString(), Toast.LENGTH_LONG).show();
+                                                                                Toast.makeText(RestaurantOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
+                                                                                Toast.makeText(RestaurantOrders.this, error.toString(), Toast.LENGTH_LONG).show();
 
                                                                             }
                                                                         }){
@@ -193,7 +193,7 @@ public class PreviousOrders extends AppCompatActivity {
                                                                     }
                                                                 };
 
-                                                                RequestQueue queue1 = Volley.newRequestQueue(PreviousOrders.this);
+                                                                RequestQueue queue1 = Volley.newRequestQueue(RestaurantOrders.this);
                                                                 queue1.add(request1);
 
 
@@ -203,7 +203,7 @@ public class PreviousOrders extends AppCompatActivity {
                                                             adapter.notifyDataSetChanged();
                                                         }
                                                         else{
-                                                            Toast.makeText(PreviousOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                                                            Toast.makeText(RestaurantOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
 
 
                                                         }
@@ -217,8 +217,8 @@ public class PreviousOrders extends AppCompatActivity {
                                             new Response.ErrorListener() {
                                                 @Override
                                                 public void onErrorResponse(VolleyError error) {
-                                                    Toast.makeText(PreviousOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
-                                                    Toast.makeText(PreviousOrders.this, error.toString(), Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(RestaurantOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(RestaurantOrders.this, error.toString(), Toast.LENGTH_LONG).show();
 
                                                 }
                                             }){
@@ -233,7 +233,7 @@ public class PreviousOrders extends AppCompatActivity {
                                         }
                                     };
 
-                                    RequestQueue queue2 = Volley.newRequestQueue(PreviousOrders.this);
+                                    RequestQueue queue2 = Volley.newRequestQueue(RestaurantOrders.this);
                                     queue2.add(request2);
 
 
@@ -242,7 +242,7 @@ public class PreviousOrders extends AppCompatActivity {
                                 }
 
                             } else {
-                                Toast.makeText(PreviousOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(RestaurantOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
                             }
                         }
                         catch (Exception e){
@@ -254,8 +254,8 @@ public class PreviousOrders extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(PreviousOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
-                        Toast.makeText(PreviousOrders.this, error.toString(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(RestaurantOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
+                        Toast.makeText(RestaurantOrders.this, error.toString(), Toast.LENGTH_LONG).show();
 
                     }
                 }){
@@ -270,7 +270,7 @@ public class PreviousOrders extends AppCompatActivity {
             }
         };
 
-        RequestQueue queue = Volley.newRequestQueue(PreviousOrders.this);
+        RequestQueue queue = Volley.newRequestQueue(RestaurantOrders.this);
         queue.add(request);
 
     }

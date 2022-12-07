@@ -1,6 +1,9 @@
 package com.project.i190426_i190435_i190660;
 
 import android.app.Application;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.widget.Toast;
 
 import com.onesignal.OSNotificationOpenedResult;
 import com.onesignal.OSNotificationReceivedEvent;
@@ -29,6 +32,24 @@ public class MyApplication extends Application {
         OneSignal.setNotificationOpenedHandler(new OneSignal.OSNotificationOpenedHandler() {
             @Override
             public void notificationOpened(OSNotificationOpenedResult osNotificationOpenedResult) {
+
+                String title=osNotificationOpenedResult.getNotification().getTitle();
+
+                System.out.println("Title: "+ title);
+
+                SharedPreferences mPref;
+                mPref=getSharedPreferences("com.project.i190426_i190435_i190660", MODE_PRIVATE);
+
+                if(mPref.getBoolean("loggedInCustomer", false)){
+                    Intent intent= new Intent(getApplicationContext(), PreviousOrders.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+                else if(mPref.getBoolean("loggedInAdmin", false)){
+                    Intent intent= new Intent(getApplicationContext(), RestaurantOrders.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
 
             }
 

@@ -20,8 +20,9 @@
         android:theme="@style/Theme.I190426_I190435_I190660"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
-
+        <activity
+            android:name=".RestaurantOrders"
+            android:exported="false" />
         <activity
             android:name=".OrderedItems"
             android:exported="false" />
@@ -58,7 +59,6 @@
         <activity
             android:name=".MainPageRestaurant"
             android:exported="false" />
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -68,11 +68,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".MyBroadcastReciever"
+
+        <receiver
+            android:name=".MyBroadcastReciever"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.AIRPLANE_MODE"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.AIRPLANE_MODE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>
