@@ -6,11 +6,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -36,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -184,6 +188,7 @@ public class MainPageCustomer extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onResume() {
         super.onResume();
@@ -204,12 +209,13 @@ public class MainPageCustomer extends AppCompatActivity {
             offline.setText("You are Offline...");
             refresh.setText("Refresh");
             Toast.makeText(MainPageCustomer.this, "You are offline", Toast.LENGTH_LONG).show();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
                 loadProductsfromSQlite();
-            }
         }
 
     }
+
+
 
     public void loadProductsfromPhp(){
         search.setText("");

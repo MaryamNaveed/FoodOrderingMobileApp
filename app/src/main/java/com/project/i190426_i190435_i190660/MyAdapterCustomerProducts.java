@@ -3,13 +3,19 @@ package com.project.i190426_i190435_i190660;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +38,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -68,7 +81,34 @@ public class MyAdapterCustomerProducts extends RecyclerView.Adapter<MyAdapterCus
 
 
         if(Ip.isConnected(c)){
-            Picasso.get().load(Uri.parse(Ip.ipAdd+"/"+allProducts.get(position).getPhoto())).into(holder.image);
+            Picasso.get().load(Uri.parse(Ip.ipAdd+"/"+allProducts.get(position).getPhoto())).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    holder.image.setImageBitmap(bitmap);
+
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                        byte[] byteArray = stream.toByteArray();
+
+                        checkProductinSqlite(allProducts.get(position), byteArray);
+
+
+                }
+
+                @Override
+                public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            });
+
+
+
+
         }
         else {
             byte[] imageData= Base64.getDecoder().decode(allProducts.get(position).getPhoto());
@@ -152,6 +192,50 @@ public class MyAdapterCustomerProducts extends RecyclerView.Adapter<MyAdapterCus
 
             }
         });
+    }
+
+    public void checkProductinSqlite(Product p, byte[] byteArray){
+
+        boolean present=false;
+
+        MyDBHelper helper= new MyDBHelper(c);
+        SQLiteDatabase db= helper.getReadableDatabase();
+        String[] cols= {MyProject.MyProducts._ID,
+                MyProject.MyProducts._NAME,
+                MyProject.MyProducts._PRICE,
+                MyProject.MyProducts._CATEGORY,
+                MyProject.MyProducts._DESCRIPTION,
+                MyProject.MyProducts._PHOTO};
+        Cursor c1=db.query(
+                MyProject.MyProducts.TABLE_NAME,
+                cols,
+                MyProject.MyProducts._ID+"="+p.getId(),
+                null,
+                null,
+                null,
+                MyProject.MyProducts._ID+" DESC"
+        );
+        while(c1.moveToNext()){
+            present=true;
+        }
+
+        if(present==false){
+
+
+            MyDBHelper helper1= new MyDBHelper(c);
+            SQLiteDatabase db1 = helper1.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+            cv.put(MyProject.MyProducts._ID, p.getId());
+            cv.put(MyProject.MyProducts._NAME, p.getName());
+            cv.put(MyProject.MyProducts._PRICE, p.getPrice());
+            cv.put(MyProject.MyProducts._CATEGORY, p.getCategory());
+            cv.put(MyProject.MyProducts._DESCRIPTION, p.getDescription());
+            cv.put(MyProject.MyProducts._PHOTO, byteArray);
+            db.insert(MyProject.MyProducts.TABLE_NAME, null, cv);
+
+            helper.close();
+        }
     }
 
 

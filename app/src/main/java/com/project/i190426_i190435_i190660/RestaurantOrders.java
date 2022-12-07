@@ -100,192 +100,190 @@ public class RestaurantOrders extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onResume() {
         super.onResume();
 
         orders.clear();
 
-        StringRequest request = new StringRequest(Request.Method.POST,
-                Ip.ipAdd + "/getOrders.php",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
+        if(Ip.isConnected(getApplicationContext())) {
+
+            StringRequest request = new StringRequest(Request.Method.POST,
+                    Ip.ipAdd + "/getOrders.php",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
 
 
+                            try {
+                                JSONObject res = new JSONObject(response);
 
-                        try {
-                            JSONObject res = new JSONObject(response);
-
-                            if (res.getInt("reqcode") == 1) {
-                                JSONArray myorders = res.getJSONArray("orders");
+                                if (res.getInt("reqcode") == 1) {
+                                    JSONArray myorders = res.getJSONArray("orders");
 //                                Toast.makeText(PreviousOrders.this, String.valueOf(myorders.length()), Toast.LENGTH_LONG).show();
-                                for (int i = 0; i < myorders.length(); i++) {
-                                    JSONObject order = myorders.getJSONObject(i);
-                                    int id = order.getInt("order_id");
-                                    int cust_id = order.getInt("customer_id");
-                                    double tax = order.getInt("tax");
-                                    String dateTime = order.getString("dateTime");
-                                    String status = order.getString("status");
+                                    for (int i = 0; i < myorders.length(); i++) {
+                                        JSONObject order = myorders.getJSONObject(i);
+                                        int id = order.getInt("order_id");
+                                        int cust_id = order.getInt("customer_id");
+                                        double tax = order.getInt("tax");
+                                        String dateTime = order.getString("dateTime");
+                                        String status = order.getString("status");
 
-                                    List<OrderItem> orderItemList=new ArrayList<>();
+                                        List<OrderItem> orderItemList = new ArrayList<>();
 
-                                    StringRequest request2 = new StringRequest(Request.Method.POST,
-                                            Ip.ipAdd + "/getOrderItembyId.php",
-                                            new Response.Listener<String>() {
-                                                @Override
-                                                public void onResponse(String response) {
+                                        StringRequest request2 = new StringRequest(Request.Method.POST,
+                                                Ip.ipAdd + "/getOrderItembyId.php",
+                                                new Response.Listener<String>() {
+                                                    @Override
+                                                    public void onResponse(String response) {
 
-                                                    try {
-                                                        JSONObject res = new JSONObject(response);
+                                                        try {
+                                                            JSONObject res = new JSONObject(response);
 
-                                                        if (res.getInt("reqcode") == 1) {
-                                                            JSONArray orderitems = res.getJSONArray("orderitems");
-                                                            for (int i = 0; i < orderitems.length(); i++) {
-                                                                JSONObject item = orderitems.getJSONObject(i);
+                                                            if (res.getInt("reqcode") == 1) {
+                                                                JSONArray orderitems = res.getJSONArray("orderitems");
+                                                                for (int i = 0; i < orderitems.length(); i++) {
+                                                                    JSONObject item = orderitems.getJSONObject(i);
 
-                                                                final int a=i;
+                                                                    final int a = i;
 
-                                                                int item_id = item.getInt("product_id");
-                                                                double price = item.getDouble("price");
-                                                                int quantity = item.getInt("quantity");
+                                                                    int item_id = item.getInt("product_id");
+                                                                    double price = item.getDouble("price");
+                                                                    int quantity = item.getInt("quantity");
 
-                                                                StringRequest request1 = new StringRequest(Request.Method.POST,
-                                                                        Ip.ipAdd + "/getProductbyId.php",
-                                                                        new Response.Listener<String>() {
-                                                                            @Override
-                                                                            public void onResponse(String response) {
+                                                                    StringRequest request1 = new StringRequest(Request.Method.POST,
+                                                                            Ip.ipAdd + "/getProductbyId.php",
+                                                                            new Response.Listener<String>() {
+                                                                                @Override
+                                                                                public void onResponse(String response) {
 
-                                                                                System.out.println(response);
+                                                                                    System.out.println(response);
 
-                                                                                try {
-                                                                                    JSONObject res = new JSONObject(response);
+                                                                                    try {
+                                                                                        JSONObject res = new JSONObject(response);
 
-                                                                                    if (res.getInt("reqcode") == 1) {
+                                                                                        if (res.getInt("reqcode") == 1) {
 
-                                                                                        JSONObject item = res.getJSONObject("item");
+                                                                                            JSONObject item = res.getJSONObject("item");
 
-                                                                                        Product p = new Product(item.getInt("id"),item.getString("name"), item.getDouble("price"), item.getString("description"),item.getString("photo"), item.getString("category"));
+                                                                                            Product p = new Product(item.getInt("id"), item.getString("name"), item.getDouble("price"), item.getString("description"), item.getString("photo"), item.getString("category"));
 
-                                                                                        orderItemList.add(new OrderItem(p, quantity, price));
+                                                                                            orderItemList.add(new OrderItem(p, quantity, price));
 
-                                                                                        if(a==orderitems.length()-1){
-                                                                                            Toast.makeText(RestaurantOrders.this, String.valueOf(orderItemList.size()), Toast.LENGTH_SHORT).show();
-                                                                                            orders.add(new Order(id, orderItemList, dateTime, tax, status));
-                                                                                            adapter.notifyDataSetChanged();
+                                                                                            if (a == orderitems.length() - 1) {
+                                                                                                Toast.makeText(RestaurantOrders.this, String.valueOf(orderItemList.size()), Toast.LENGTH_SHORT).show();
+                                                                                                orders.add(new Order(id, orderItemList, dateTime, tax, status));
+                                                                                                adapter.notifyDataSetChanged();
+                                                                                            }
+
+
+                                                                                        } else {
+                                                                                            Toast.makeText(RestaurantOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
                                                                                         }
+                                                                                    } catch (Exception e) {
 
-
-                                                                                    } else {
-                                                                                        Toast.makeText(RestaurantOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
                                                                                     }
+
+
                                                                                 }
-                                                                                catch (Exception e){
+                                                                            },
+                                                                            new Response.ErrorListener() {
+                                                                                @Override
+                                                                                public void onErrorResponse(VolleyError error) {
+                                                                                    Toast.makeText(RestaurantOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
+                                                                                    Toast.makeText(RestaurantOrders.this, error.toString(), Toast.LENGTH_LONG).show();
 
                                                                                 }
+                                                                            }) {
+                                                                        @Nullable
+                                                                        @Override
+                                                                        protected Map<String, String> getParams() throws AuthFailureError {
+                                                                            Map<String, String> params = new HashMap<>();
+
+                                                                            params.put("id", String.valueOf(item_id));
+
+                                                                            return params;
+                                                                        }
+                                                                    };
+
+                                                                    RequestQueue queue1 = Volley.newRequestQueue(RestaurantOrders.this);
+                                                                    queue1.add(request1);
 
 
+                                                                }
 
-
-                                                                            }
-                                                                        },
-                                                                        new Response.ErrorListener() {
-                                                                            @Override
-                                                                            public void onErrorResponse(VolleyError error) {
-                                                                                Toast.makeText(RestaurantOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
-                                                                                Toast.makeText(RestaurantOrders.this, error.toString(), Toast.LENGTH_LONG).show();
-
-                                                                            }
-                                                                        }){
-                                                                    @Nullable
-                                                                    @Override
-                                                                    protected Map<String, String> getParams() throws AuthFailureError {
-                                                                        Map<String, String> params = new HashMap<>();
-
-                                                                        params.put("id", String.valueOf(item_id));
-
-                                                                        return params;
-                                                                    }
-                                                                };
-
-                                                                RequestQueue queue1 = Volley.newRequestQueue(RestaurantOrders.this);
-                                                                queue1.add(request1);
-
+                                                            } else {
+                                                                Toast.makeText(RestaurantOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
 
 
                                                             }
 
-                                                        }
-                                                        else{
-                                                            Toast.makeText(RestaurantOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
-
-
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
                                                         }
 
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
                                                     }
+                                                },
+                                                new Response.ErrorListener() {
+                                                    @Override
+                                                    public void onErrorResponse(VolleyError error) {
+                                                        Toast.makeText(RestaurantOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(RestaurantOrders.this, error.toString(), Toast.LENGTH_LONG).show();
 
-                                                }
-                                            },
-                                            new Response.ErrorListener() {
-                                                @Override
-                                                public void onErrorResponse(VolleyError error) {
-                                                    Toast.makeText(RestaurantOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
-                                                    Toast.makeText(RestaurantOrders.this, error.toString(), Toast.LENGTH_LONG).show();
+                                                    }
+                                                }) {
+                                            @Nullable
+                                            @Override
+                                            protected Map<String, String> getParams() throws AuthFailureError {
+                                                Map<String, String> params = new HashMap<>();
 
-                                                }
-                                            }){
-                                        @Nullable
-                                        @Override
-                                        protected Map<String, String> getParams() throws AuthFailureError {
-                                            Map<String, String> params = new HashMap<>();
+                                                params.put("order_id", String.valueOf(id));
 
-                                            params.put("order_id", String.valueOf(id));
+                                                return params;
+                                            }
+                                        };
 
-                                            return params;
-                                        }
-                                    };
-
-                                    RequestQueue queue2 = Volley.newRequestQueue(RestaurantOrders.this);
-                                    queue2.add(request2);
+                                        RequestQueue queue2 = Volley.newRequestQueue(RestaurantOrders.this);
+                                        queue2.add(request2);
 
 
+                                    }
 
-
+                                } else {
+                                    Toast.makeText(RestaurantOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
                                 }
-
-                            } else {
-                                Toast.makeText(RestaurantOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
+
                         }
-                        catch (Exception e){
-                            e.printStackTrace();
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(RestaurantOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(RestaurantOrders.this, error.toString(), Toast.LENGTH_LONG).show();
+
                         }
+                    }) {
+                @Nullable
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
 
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(RestaurantOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
-                        Toast.makeText(RestaurantOrders.this, error.toString(), Toast.LENGTH_LONG).show();
+                    params.put("customer_id", String.valueOf(mPref.getInt("id", 0)));
 
-                    }
-                }){
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
+                    return params;
+                }
+            };
 
-                params.put("customer_id", String.valueOf(mPref.getInt("id", 0)));
-
-                return params;
-            }
-        };
-
-        RequestQueue queue = Volley.newRequestQueue(RestaurantOrders.this);
-        queue.add(request);
+            RequestQueue queue = Volley.newRequestQueue(RestaurantOrders.this);
+            queue.add(request);
+        }
+        else {
+            loadfromSqlite();
+        }
 
     }
 
