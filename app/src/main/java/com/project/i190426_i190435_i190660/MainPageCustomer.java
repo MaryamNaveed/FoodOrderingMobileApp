@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -35,6 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Locale;
 
@@ -201,7 +204,9 @@ public class MainPageCustomer extends AppCompatActivity {
             offline.setText("You are Offline...");
             refresh.setText("Refresh");
             Toast.makeText(MainPageCustomer.this, "You are offline", Toast.LENGTH_LONG).show();
-            loadProductsfromSQlite();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                loadProductsfromSQlite();
+            }
         }
 
     }
@@ -265,11 +270,47 @@ public class MainPageCustomer extends AppCompatActivity {
         queue1.add(request1);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void loadProductsfromSQlite(){
         search.setText("");
 
         allProducts.clear();
         allSearchProducts.clear();
+
+
+        MyDBHelper helper= new MyDBHelper(MainPageCustomer.this);
+        SQLiteDatabase db= helper.getReadableDatabase();
+        String[] cols= {MyProject.MyProducts._ID,
+                MyProject.MyProducts._NAME,
+                MyProject.MyProducts._PRICE,
+                MyProject.MyProducts._CATEGORY,
+                MyProject.MyProducts._DESCRIPTION,
+                MyProject.MyProducts._PHOTO};
+        Cursor c=db.query(
+                MyProject.MyProducts.TABLE_NAME,
+                cols,
+                null,
+                null,
+                null,
+                null,
+                MyProject.MyProducts._ID+" DESC"
+        );
+        while(c.moveToNext()){
+            int a1= c.getColumnIndex(MyProject.MyProducts._ID);
+            int a2= c.getColumnIndex(MyProject.MyProducts._NAME);
+            int a3= c.getColumnIndex(MyProject.MyProducts._PRICE);
+            int a4= c.getColumnIndex(MyProject.MyProducts._CATEGORY);
+            int a5= c.getColumnIndex(MyProject.MyProducts._DESCRIPTION);
+            int a6= c.getColumnIndex(MyProject.MyProducts._PHOTO);
+
+            final String imageData= Base64.getEncoder().encodeToString(c.getBlob(a6));
+
+            Product p=new Product(c.getInt(a1), c.getString(a2), c.getDouble(a3), c.getString(a5), imageData , c.getString(a4));
+            allProducts.add(p);
+            adapter.notifyDataSetChanged();
+
+        }
+
 
 
     }

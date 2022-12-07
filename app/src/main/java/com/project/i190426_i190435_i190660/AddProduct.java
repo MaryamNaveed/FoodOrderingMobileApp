@@ -3,8 +3,10 @@ package com.project.i190426_i190435_i190660;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
@@ -41,6 +43,7 @@ public class AddProduct extends AppCompatActivity {
     Button add;
     Uri selectedImage= null;
     String url="";
+    int id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +93,7 @@ public class AddProduct extends AppCompatActivity {
 
                     if(connected){
                         uploadImageandDatatophp();
-                        uploadImageandDatatoSqlite();
+
                     }
                     else {
                         Toast.makeText(AddProduct.this, "You are offline", Toast.LENGTH_LONG).show();
@@ -104,6 +107,26 @@ public class AddProduct extends AppCompatActivity {
     }
 
     public void uploadImageandDatatoSqlite(){
+
+        Bitmap bmp = ((BitmapDrawable) image.getDrawable()).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        MyDBHelper helper = new MyDBHelper(AddProduct.this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(MyProject.MyProducts._ID, id);
+        cv.put(MyProject.MyProducts._NAME, name.getText() + "");
+        cv.put(MyProject.MyProducts._PRICE, Double.valueOf(price.getText().toString()));
+        cv.put(MyProject.MyProducts._CATEGORY, category.getText() + "");
+        cv.put(MyProject.MyProducts._DESCRIPTION, description.getText() + "");
+        cv.put(MyProject.MyProducts._PHOTO, byteArray);
+        db.insert(MyProject.MyProducts.TABLE_NAME, null, cv);
+
+        helper.close();
+
 
     }
 
@@ -193,8 +216,13 @@ public class AddProduct extends AppCompatActivity {
                             if(res1.getInt("reqcode")==1){
                                 Toast.makeText(AddProduct.this, "Foot Item Added", Toast.LENGTH_LONG).show();
 
+                                id = res1.getInt("id");
+
+                                uploadImageandDatatoSqlite();
                                 Intent intent=new Intent(AddProduct.this, MainPageRestaurant.class);
                                 startActivity(intent);
+
+
                             }
                             else {
                                 Toast.makeText(AddProduct.this, res1.get("reqmsg").toString(), Toast.LENGTH_LONG).show();

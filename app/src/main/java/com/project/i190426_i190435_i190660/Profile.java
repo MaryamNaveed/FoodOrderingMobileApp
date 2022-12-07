@@ -4,8 +4,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,6 +70,7 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                if(Ip.isConnected(getApplicationContext())){
                 LayoutInflater factory = LayoutInflater.from(Profile.this);
                 final View view1 = factory.inflate(R.layout.pop_up_edit, null);
                 EditText editText = view1.findViewById(R.id.editText);
@@ -102,6 +107,8 @@ public class Profile extends AppCompatActivity {
                                                 Toast.makeText(Profile.this, "Updated Name", Toast.LENGTH_LONG).show();
                                                 name.setText(editText.getText().toString());
                                                 dialog.dismiss();
+
+                                                updateSqlitecustomer();
 
                                             }
                                             else {
@@ -149,11 +156,16 @@ public class Profile extends AppCompatActivity {
                 });
 
             }
+                else {
+                Toast.makeText(Profile.this, "You are offline", Toast.LENGTH_LONG).show();
+            }
+            }
         });
 
         editemail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(Ip.isConnected(getApplicationContext())){
                 LayoutInflater factory = LayoutInflater.from(Profile.this);
                 final View view1 = factory.inflate(R.layout.pop_up_edit, null);
                 EditText editText = view1.findViewById(R.id.editText);
@@ -190,6 +202,7 @@ public class Profile extends AppCompatActivity {
                                                 Toast.makeText(Profile.this, "Updated Email", Toast.LENGTH_LONG).show();
                                                 email.setText(editText.getText().toString());
                                                 dialog.dismiss();
+                                                updateSqlitecustomer();
 
                                             }
                                             else {
@@ -235,6 +248,10 @@ public class Profile extends AppCompatActivity {
                     }
                 });
 
+            }
+                else {
+                Toast.makeText(Profile.this, "You are offline", Toast.LENGTH_LONG).show();
+            }
 
             }
         });
@@ -243,90 +260,90 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                LayoutInflater factory = LayoutInflater.from(Profile.this);
-                final View view1 = factory.inflate(R.layout.pop_up_edit, null);
-                EditText editText = view1.findViewById(R.id.editText);
-                editText.setText(phone.getText().toString());
-                Button edit= view1.findViewById(R.id.edit);
-                Button cancel= view1.findViewById(R.id.cancel);
+                if (Ip.isConnected(getApplicationContext())) {
+                    LayoutInflater factory = LayoutInflater.from(Profile.this);
+                    final View view1 = factory.inflate(R.layout.pop_up_edit, null);
+                    EditText editText = view1.findViewById(R.id.editText);
+                    editText.setText(phone.getText().toString());
+                    Button edit = view1.findViewById(R.id.edit);
+                    Button cancel = view1.findViewById(R.id.cancel);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(Profile.this).setView(view1);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Profile.this).setView(view1);
 
-                AlertDialog dialog=builder.create();
+                    AlertDialog dialog = builder.create();
 
-                dialog.show();
+                    dialog.show();
 
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dialog.dismiss();
+                        }
+                    });
 
-                edit.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                    edit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
-                        StringRequest request = new StringRequest(Request.Method.POST, Ip.ipAdd + "/editPhone.php",
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
+                            StringRequest request = new StringRequest(Request.Method.POST, Ip.ipAdd + "/editPhone.php",
+                                    new Response.Listener<String>() {
+                                        @Override
+                                        public void onResponse(String response) {
 
-                                        try {
-                                            JSONObject res1 = new JSONObject(response);
+                                            try {
+                                                JSONObject res1 = new JSONObject(response);
 
-                                            if(res1.getInt("reqcode")==1){
-                                                Toast.makeText(Profile.this, "Updated Phone", Toast.LENGTH_LONG).show();
-                                                phone.setText(editText.getText().toString());
-                                                dialog.dismiss();
+                                                if (res1.getInt("reqcode") == 1) {
+                                                    Toast.makeText(Profile.this, "Updated Phone", Toast.LENGTH_LONG).show();
+                                                    phone.setText(editText.getText().toString());
+                                                    dialog.dismiss();
+                                                    updateSqlitecustomer();
 
 
+                                                } else {
+                                                    Toast.makeText(Profile.this, res1.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                                                }
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                                Toast.makeText(Profile.this, "Cannot Parse JSON", Toast.LENGTH_LONG).show();
                                             }
-                                            else {
-                                                Toast.makeText(Profile.this, res1.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
-                                            }
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                            Toast.makeText(Profile.this, "Cannot Parse JSON", Toast.LENGTH_LONG).show();
+
+
                                         }
+                                    },
+                                    new Response.ErrorListener() {
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            Toast.makeText(Profile.this, "Connection Error", Toast.LENGTH_LONG).show();
+                                            Toast.makeText(Profile.this, error.toString(), Toast.LENGTH_LONG).show();
+
+                                        }
+                                    }) {
+                                @Nullable
+                                @Override
+                                protected Map<String, String> getParams() throws AuthFailureError {
+                                    Map<String, String> params = new HashMap<>();
 
 
-
-                                    }
-                                },
-                                new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Toast.makeText(Profile.this, "Connection Error", Toast.LENGTH_LONG).show();
-                                        Toast.makeText(Profile.this, error.toString(), Toast.LENGTH_LONG).show();
-
-                                    }
-                                }){
-                            @Nullable
-                            @Override
-                            protected Map<String, String> getParams() throws AuthFailureError {
-                                Map<String, String> params = new HashMap<>();
+                                    params.put("id", String.valueOf(mPref.getInt("id", 0)));
+                                    params.put("phone", editText.getText().toString());
 
 
-                                params.put("id", String.valueOf(mPref.getInt("id", 0)));
-                                params.put("phone",editText.getText().toString());
+                                    return params;
+                                }
+                            };
+
+                            RequestQueue queue = Volley.newRequestQueue(Profile.this);
+                            queue.add(request);
+
+                        }
+                    });
 
 
-
-
-
-                                return params;
-                            }
-                        };
-
-                        RequestQueue queue = Volley.newRequestQueue(Profile.this);
-                        queue.add(request);
-
-                    }
-                });
-
-
-
+                }
+                else {
+                    Toast.makeText(Profile.this, "You are offline", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -336,63 +353,117 @@ public class Profile extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        StringRequest request1 = new StringRequest(Request.Method.POST,
-                Ip.ipAdd + "/getCustomerbyId.php",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
+        if(Ip.isConnected(getApplicationContext())) {
 
-                        try {
+            StringRequest request1 = new StringRequest(Request.Method.POST,
+                    Ip.ipAdd + "/getCustomerbyId.php",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
 
-                            JSONObject res = new JSONObject(response);
+                            try {
 
-                            if (res.getInt("reqcode") == 1) {
-                                JSONObject user=res.getJSONObject("user");
+                                JSONObject res = new JSONObject(response);
 
-                                name.setText(user.getString("name"));
-                                email.setText(user.getString("email"));
-                                phone.setText(user.getString("phone"));
+                                if (res.getInt("reqcode") == 1) {
+                                    JSONObject user = res.getJSONObject("user");
+
+                                    name.setText(user.getString("name"));
+                                    email.setText(user.getString("email"));
+                                    phone.setText(user.getString("phone"));
 
 
+                                } else {
+                                    Toast.makeText(Profile.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                                }
 
 
-                            }
-                            else {
-                                Toast.makeText(Profile.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                            } catch (Exception e) {
+
                             }
 
 
                         }
-                        catch (Exception e){
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(Profile.this, "Connection Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(Profile.this, error.toString(), Toast.LENGTH_LONG).show();
 
                         }
+                    }) {
+                @Nullable
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+
+
+                    params.put("id", String.valueOf(mPref.getInt("id", 0)));
+
+                    return params;
+                }
+            };
+
+            RequestQueue queue1 = Volley.newRequestQueue(Profile.this);
+            queue1.add(request1);
+
+        }
+        else{
+            loadFromSqlite();
+
+        }
+    }
+
+    public void loadFromSqlite(){
+        MyDBHelper helper= new MyDBHelper(Profile.this);
+        SQLiteDatabase db= helper.getReadableDatabase();
+        String[] cols= {MyProject.MyCustomer._ID,
+                MyProject.MyCustomer._NAME,
+                MyProject.MyCustomer._EMAIL,
+                MyProject.MyCustomer._PHONE};
+        Cursor c=db.query(
+                MyProject.MyCustomer.TABLE_NAME,
+                cols,
+                "id="+mPref.getInt("id", 0),
+                null,
+                null,
+                null,
+                MyProject.MyProducts._ID+" DESC"
+        );
+        while(c.moveToNext()){
+//            int idd = mPref.getInt("id", 0);
+//            int a1=c.getColumnIndex(MyProject.MyCustomer._ID);
+            int a2= c.getColumnIndex(MyProject.MyCustomer._NAME);
+            int a3= c.getColumnIndex(MyProject.MyCustomer._EMAIL);
+            int a4= c.getColumnIndex(MyProject.MyCustomer._PHONE);
+
+            name.setText(c.getString(a2));
+            email.setText(c.getString(a3));
+            phone.setText(c.getString(a4));
 
 
 
 
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(Profile.this, "Connection Error", Toast.LENGTH_LONG).show();
-                        Toast.makeText(Profile.this, error.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
 
-                    }
-                }){
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
+    public void updateSqlitecustomer(){
+            int myid=mPref.getInt("id", 0);
 
 
-                params.put("id", String.valueOf(mPref.getInt("id", 0)));
+            MyDBHelper helper = new MyDBHelper(Profile.this);
+            SQLiteDatabase db = helper.getWritableDatabase();
 
-                return params;
-            }
-        };
+            ContentValues cv = new ContentValues();
+            cv.put(MyProject.MyCustomer._ID, myid);
+            cv.put(MyProject.MyCustomer._NAME, name.getText()+"");
+            cv.put(MyProject.MyCustomer._EMAIL, email.getText()+"");
+            cv.put(MyProject.MyCustomer._PHONE, phone.getText()+"");
 
-        RequestQueue queue1 = Volley.newRequestQueue(Profile.this);
-        queue1.add(request1);
+            db.update(MyProject.MyCustomer.TABLE_NAME, cv, "id=?", new String[]{String.valueOf(myid)});
+
+
+        helper.close();
     }
 }

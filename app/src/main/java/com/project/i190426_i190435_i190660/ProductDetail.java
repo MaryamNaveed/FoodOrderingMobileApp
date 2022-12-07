@@ -3,8 +3,12 @@ package com.project.i190426_i190435_i190660;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +33,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -109,7 +114,13 @@ public class ProductDetail extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                addTocartfunc();
+                if(Ip.isConnected(getApplicationContext())){
+                    addTocartfunc();
+                }
+                else{
+                    Toast.makeText(ProductDetail.this, "You are offline", Toast.LENGTH_LONG).show();
+                }
+
 
             }
         });
@@ -131,6 +142,8 @@ public class ProductDetail extends AppCompatActivity {
                                 int idUser=res.getInt("id");
 
                                 Toast.makeText(ProductDetail.this, "Added to cart", Toast.LENGTH_LONG).show();
+
+                                addToSqliteCart();
 
                                 Intent intent=new Intent(ProductDetail.this, Cart.class);
                                 startActivity(intent);
@@ -181,5 +194,20 @@ public class ProductDetail extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(ProductDetail.this);
         queue.add(request);
+    }
+
+    public void addToSqliteCart(){
+
+
+        MyDBHelper helper = new MyDBHelper(ProductDetail.this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(MyProject.MyCart.CUST_ID, mPref.getInt("id", 0));
+        cv.put(MyProject.MyCart.ITEM_ID, product.getId());
+        cv.put(MyProject.MyCart.QUANTITY, Integer.valueOf(quantity.getText().toString()));
+        db.insert(MyProject.MyCart.TABLE_NAME, null, cv);
+
+        helper.close();
     }
 }

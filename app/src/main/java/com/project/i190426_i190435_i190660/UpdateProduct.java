@@ -3,8 +3,10 @@ package com.project.i190426_i190435_i190660;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
@@ -109,8 +111,6 @@ public class UpdateProduct extends AppCompatActivity {
                 boolean connected = nInfo != null && nInfo.isAvailable() && nInfo.isConnected();
 
                 if(connected){
-
-
                     updateProducttophp();
                 }
                 else {
@@ -205,6 +205,7 @@ public class UpdateProduct extends AppCompatActivity {
                             JSONObject res1 = new JSONObject(response);
 
                             if(res1.getInt("reqcode")==1){
+                                updateToSqlite();
                                 Toast.makeText(UpdateProduct.this, "Foot Item Updated", Toast.LENGTH_LONG).show();
 
                                 Intent intent=new Intent(UpdateProduct.this, MainPageRestaurant.class);
@@ -254,7 +255,28 @@ public class UpdateProduct extends AppCompatActivity {
 
     public void updateProducttophp(){
 
-
         uploadImage();
+    }
+
+    public void updateToSqlite(){
+        Bitmap bmp = ((BitmapDrawable) image.getDrawable()).getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        MyDBHelper helper = new MyDBHelper(UpdateProduct.this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(MyProject.MyProducts._ID, product.getId());
+        cv.put(MyProject.MyProducts._NAME, name.getText() + "");
+        cv.put(MyProject.MyProducts._PRICE, Double.valueOf(price.getText().toString()));
+        cv.put(MyProject.MyProducts._CATEGORY, category.getText() + "");
+        cv.put(MyProject.MyProducts._DESCRIPTION, description.getText() + "");
+        cv.put(MyProject.MyProducts._PHOTO, byteArray);
+        db.update(MyProject.MyProducts.TABLE_NAME, cv, "id=?", new String[]{String.valueOf(product.getId())});
+
+        helper.close();
+
     }
 }

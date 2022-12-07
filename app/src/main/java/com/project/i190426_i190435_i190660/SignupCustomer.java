@@ -3,8 +3,12 @@ package com.project.i190426_i190435_i190660;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -26,6 +30,7 @@ import com.onesignal.OneSignal;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,6 +96,9 @@ public class SignupCustomer extends AppCompatActivity {
                                         editmPref.putInt("id", idUser);
                                         editmPref.apply();
                                         editmPref.commit();
+
+                                        insertCustomerToSqlite();
+
                                         Intent intent=new Intent(SignupCustomer.this, MainPageCustomer.class);
                                         startActivity(intent);
                                         finish();
@@ -162,5 +170,23 @@ public class SignupCustomer extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void insertCustomerToSqlite(){
+        int myid=mPref.getInt("id", 0);
+
+
+        MyDBHelper helper = new MyDBHelper(SignupCustomer.this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(MyProject.MyCustomer._ID, myid);
+        cv.put(MyProject.MyCustomer._NAME, name.getText()+"");
+        cv.put(MyProject.MyCustomer._EMAIL, email.getText()+"");
+        cv.put(MyProject.MyCustomer._PHONE, phone.getText()+"");
+
+        db.insert(MyProject.MyCustomer.TABLE_NAME, null, cv);
+
+        helper.close();
     }
 }

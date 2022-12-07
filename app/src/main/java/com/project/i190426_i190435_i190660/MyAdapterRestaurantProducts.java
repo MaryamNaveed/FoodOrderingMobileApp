@@ -3,9 +3,12 @@ package com.project.i190426_i190435_i190660;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -31,6 +35,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +57,7 @@ public class MyAdapterRestaurantProducts extends RecyclerView.Adapter<MyAdapterR
         return new MyViewHolder(row);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull MyAdapterRestaurantProducts.MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
 
@@ -63,7 +69,16 @@ public class MyAdapterRestaurantProducts extends RecyclerView.Adapter<MyAdapterR
 
 //        holder.image.setImageResource(id);
 
-        Picasso.get().load(Uri.parse(Ip.ipAdd+"/"+allProducts.get(position).getPhoto())).into(holder.image);
+        if(Ip.isConnected(c)){
+            Picasso.get().load(Uri.parse(Ip.ipAdd+"/"+allProducts.get(position).getPhoto())).into(holder.image);
+        }
+        else {
+            byte[] imageData= Base64.getDecoder().decode(allProducts.get(position).getPhoto());
+            Bitmap dppp = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+            holder.image.setImageBitmap(dppp);
+        }
+
+
 
 
 
