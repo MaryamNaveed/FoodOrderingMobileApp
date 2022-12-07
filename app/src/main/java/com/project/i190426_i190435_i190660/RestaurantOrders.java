@@ -1,11 +1,15 @@
 package com.project.i190426_i190435_i190660;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,6 +104,8 @@ public class RestaurantOrders extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        orders.clear();
+
         StringRequest request = new StringRequest(Request.Method.POST,
                 Ip.ipAdd + "/getOrders.php",
                 new Response.Listener<String>() {
@@ -137,6 +144,8 @@ public class RestaurantOrders extends AppCompatActivity {
                                                             for (int i = 0; i < orderitems.length(); i++) {
                                                                 JSONObject item = orderitems.getJSONObject(i);
 
+                                                                final int a=i;
+
                                                                 int item_id = item.getInt("product_id");
                                                                 double price = item.getDouble("price");
                                                                 int quantity = item.getInt("quantity");
@@ -159,6 +168,12 @@ public class RestaurantOrders extends AppCompatActivity {
                                                                                         Product p = new Product(item.getInt("id"),item.getString("name"), item.getDouble("price"), item.getString("description"),item.getString("photo"), item.getString("category"));
 
                                                                                         orderItemList.add(new OrderItem(p, quantity, price));
+
+                                                                                        if(a==orderitems.length()-1){
+                                                                                            Toast.makeText(RestaurantOrders.this, String.valueOf(orderItemList.size()), Toast.LENGTH_SHORT).show();
+                                                                                            orders.add(new Order(id, orderItemList, dateTime, tax, status));
+                                                                                            adapter.notifyDataSetChanged();
+                                                                                        }
 
 
                                                                                     } else {
@@ -199,8 +214,7 @@ public class RestaurantOrders extends AppCompatActivity {
 
 
                                                             }
-                                                            orders.add(new Order(id, orderItemList, dateTime, tax, status));
-                                                            adapter.notifyDataSetChanged();
+
                                                         }
                                                         else{
                                                             Toast.makeText(RestaurantOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
@@ -272,6 +286,108 @@ public class RestaurantOrders extends AppCompatActivity {
 
         RequestQueue queue = Volley.newRequestQueue(RestaurantOrders.this);
         queue.add(request);
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void loadfromSqlite(){
+
+        MyDBHelper helper= new MyDBHelper(RestaurantOrders.this);
+        SQLiteDatabase db= helper.getReadableDatabase();
+        String[] cols= {MyProject.MyOrder._ID,
+                MyProject.MyOrder._CUST_ID,
+                MyProject.MyOrder._DATETIME,
+                MyProject.MyOrder._TAX,
+                MyProject.MyOrder._STATUS};
+        Cursor c=db.query(
+                MyProject.MyOrder.TABLE_NAME,
+                cols,
+                null,
+                null,
+                null,
+                null,
+                MyProject.MyOrder._ID+" DESC"
+        );
+        while(c.moveToNext()){
+            int a1= c.getColumnIndex(MyProject.MyOrder._ID);
+            int a1_2 = c.getColumnIndex(MyProject.MyOrder._DATETIME);
+            int a1_3 = c.getColumnIndex(MyProject.MyOrder._TAX);
+            int a1_4 = c.getColumnIndex(MyProject.MyOrder._STATUS);
+
+
+            List<OrderItem> orderitems=new ArrayList<>();
+
+            MyDBHelper helper1= new MyDBHelper(RestaurantOrders.this);
+            SQLiteDatabase db1= helper1.getReadableDatabase();
+            String[] cols1= {MyProject.MyOrderItem._ID,
+                    MyProject.MyOrderItem.ORDER_ID,
+                    MyProject.MyOrderItem.ITEM_ID,
+                    MyProject.MyOrderItem._QUANTITY,
+                    MyProject.MyOrderItem._PRICE};
+            Cursor c1=db1.query(
+                    MyProject.MyOrderItem.TABLE_NAME,
+                    cols1,
+                    MyProject.MyOrderItem.ORDER_ID+"="+c.getInt(a1),
+                    null,
+                    null,
+                    null,
+                    MyProject.MyOrderItem.ORDER_ID+" DESC"
+            );
+            while(c1.moveToNext()){
+                int a2= c1.getColumnIndex(MyProject.MyOrderItem.ITEM_ID);
+                int a3= c1.getColumnIndex(MyProject.MyOrderItem._QUANTITY);
+                int a4= c1.getColumnIndex(MyProject.MyOrderItem._PRICE);
+
+
+                MyDBHelper helper2= new MyDBHelper(RestaurantOrders.this);
+                SQLiteDatabase db2= helper2.getReadableDatabase();
+                String[] cols2= {MyProject.MyProducts._ID,
+                        MyProject.MyProducts._NAME,
+                        MyProject.MyProducts._PRICE,
+                        MyProject.MyProducts._CATEGORY,
+                        MyProject.MyProducts._DESCRIPTION,
+                        MyProject.MyProducts._PHOTO};
+                Cursor c2=db2.query(
+                        MyProject.MyProducts.TABLE_NAME,
+                        cols2,
+                        "id="+c1.getInt(a2),
+                        null,
+                        null,
+                        null,
+                        MyProject.MyProducts._ID+" DESC"
+                );
+                while(c2.moveToNext()){
+                    int a11= c2.getColumnIndex(MyProject.MyProducts._ID);
+                    int a12= c2.getColumnIndex(MyProject.MyProducts._NAME);
+                    int a13= c2.getColumnIndex(MyProject.MyProducts._PRICE);
+                    int a14= c2.getColumnIndex(MyProject.MyProducts._CATEGORY);
+                    int a15= c2.getColumnIndex(MyProject.MyProducts._DESCRIPTION);
+                    int a16= c2.getColumnIndex(MyProject.MyProducts._PHOTO);
+
+                    final String imageData= Base64.getEncoder().encodeToString(c2.getBlob(a16));
+
+                    Product p=new Product(c2.getInt(a11), c2.getString(a12), c2.getDouble(a13), c2.getString(a15), imageData , c2.getString(a14));
+
+                    orderitems.add(new OrderItem(p, c1.getInt(a3), c1.getDouble(a4)));
+
+
+
+
+                }
+
+                orders.add(new Order(c.getInt(a1),orderitems, c.getString(a1_2), c.getInt(a1_3), c.getString(a1_4)));
+
+                adapter.notifyDataSetChanged();
+
+
+
+
+            }
+
+
+
+
+        }
 
     }
 }

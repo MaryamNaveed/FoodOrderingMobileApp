@@ -6,10 +6,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -33,6 +36,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -83,6 +87,7 @@ public class Cart extends AppCompatActivity {
         });
 
         checkout.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
 
@@ -104,7 +109,57 @@ public class Cart extends AppCompatActivity {
         });
     }
 
+    public void placeOrderToSqlite(int id, String dateTime){
+
+
+        MyDBHelper helper = new MyDBHelper(Cart.this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(MyProject.MyOrder._ID, id);
+        cv.put(MyProject.MyOrder._CUST_ID, mPref.getInt("id", 0));
+        cv.put(MyProject.MyOrder._DATETIME, dateTime);
+        cv.put(MyProject.MyOrder._TAX, taxCal);
+        cv.put(MyProject.MyOrder._STATUS, "Placed");
+        db.insert(MyProject.MyOrder.TABLE_NAME, null, cv);
+
+        helper.close();
+
+    }
+
+    public void addOrderItemtoSqlite(int orderid, CartItems c){
+        MyDBHelper helper = new MyDBHelper(Cart.this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(MyProject.MyOrderItem.ORDER_ID, orderid);
+        cv.put(MyProject.MyOrderItem.ITEM_ID, c.getP().getId());
+        cv.put(MyProject.MyOrderItem._QUANTITY, c.getQuantity());
+        cv.put(MyProject.MyOrderItem._PRICE, c.getP().getPrice());
+
+        db.insert(MyProject.MyOrderItem.TABLE_NAME, null, cv);
+
+        helper.close();
+
+    }
+
+    public void deletefromSqlite(int item_id, int cust_id){
+
+        MyDBHelper helper = new MyDBHelper(Cart.this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        db.delete(MyProject.MyCart.TABLE_NAME, MyProject.MyCart.CUST_ID+"=? and "+ MyProject.MyCart.ITEM_ID+"=?", new String[]{String.valueOf(cust_id), String.valueOf(item_id)});
+
+        helper.close();
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void placeOrder(){
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now();
+        String dateTime = dtf.format(now);
 
         StringRequest request = new StringRequest(Request.Method.POST, Ip.ipAdd + "/addOrder.php",
                 new Response.Listener<String>() {
@@ -117,10 +172,13 @@ public class Cart extends AppCompatActivity {
                             if (res.getInt("reqcode") == 1) {
 
                                 int idOrder=res.getInt("id");
+                                placeOrderToSqlite(idOrder, dateTime);
 
                                 for (int i=0; i<cartItems.size(); i++){
                                     addOrderItem(idOrder, cartItems.get(i));
+                                    addOrderItemtoSqlite(idOrder, cartItems.get(i));
                                     deletefromCartPhp(cartItems.get(i).getP().getId(), mPref.getInt("id", 0));
+                                    deletefromSqlite(cartItems.get(i).getP().getId(), mPref.getInt("id", 0));
 
                                     pushOrderNotification("Order has been successfully placed");
 
@@ -166,9 +224,7 @@ public class Cart extends AppCompatActivity {
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
 
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                LocalDateTime now = LocalDateTime.now();
-                String dateTime = dtf.format(now);
+
 
 
                 params.put("customer_id", String.valueOf(mPref.getInt("id", 0)));

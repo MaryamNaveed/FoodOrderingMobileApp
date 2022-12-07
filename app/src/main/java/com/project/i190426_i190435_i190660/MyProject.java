@@ -28,4 +28,21 @@ public class MyProject {
         public static String CUST_ID="cust_id";
         public static String QUANTITY="quantity";
     }
+
+    public static class MyOrder implements BaseColumns {
+        public static String TABLE_NAME="orders";
+        public static String _ID="order_id";
+        public static String _CUST_ID="cust_id";
+        public static String _DATETIME="dateTime";
+        public static String _TAX="tax";
+        public static String _STATUS="status";
+    }
+
+    public static class MyOrderItem implements BaseColumns {
+        public static String TABLE_NAME="orderitems";
+        public static String ORDER_ID="order_id";
+        public static String ITEM_ID="item_id";
+        public static String _QUANTITY="quantity";
+        public static String _PRICE="price";
+    }
 }

@@ -1,7 +1,10 @@
 package com.project.i190426_i190435_i190660;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.Base64;
 import java.util.List;
 
 public class MyAdapterOrderItem extends RecyclerView.Adapter<MyAdapterOrderItem.MyViewHolder> {
@@ -32,6 +37,7 @@ public class MyAdapterOrderItem extends RecyclerView.Adapter<MyAdapterOrderItem.
         return new MyViewHolder(row);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onBindViewHolder(@NonNull MyAdapterOrderItem.MyViewHolder holder, int position) {
         holder.name.setText(orderedItems.get(position).getP().getName());
@@ -42,7 +48,15 @@ public class MyAdapterOrderItem extends RecyclerView.Adapter<MyAdapterOrderItem.
 //
 //        holder.image.setImageResource(id);
 
-        Picasso.get().load(Uri.parse(Ip.ipAdd+"/"+orderedItems.get(position).getP().getPhoto())).into(holder.image);
+        if(Ip.isConnected(c)){
+            Picasso.get().load(Uri.parse(Ip.ipAdd+"/"+orderedItems.get(position).getP().getPhoto())).into(holder.image);
+        }
+        else {
+            byte[] imageData= Base64.getDecoder().decode(orderedItems.get(position).getP().getPhoto());
+            Bitmap dppp = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+            holder.image.setImageBitmap(dppp);
+        }
+      ;
     }
 
     @Override

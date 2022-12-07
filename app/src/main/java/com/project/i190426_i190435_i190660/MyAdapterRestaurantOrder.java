@@ -73,23 +73,26 @@ public class MyAdapterRestaurantOrder extends RecyclerView.Adapter<MyAdapterRest
         RecyclerView.LayoutManager lm=new LinearLayoutManager(c);
         holder.rv.setLayoutManager(lm);
 
-        StringRequest request = new StringRequest(Request.Method.POST,
-                Ip.ipAdd + "/getOrderbyId.php",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
+        if(Ip.isConnected(c.getApplicationContext())) {
 
-                        try {
-                            JSONObject res = new JSONObject(response);
 
-                            if (res.getInt("reqcode") == 1) {
+            StringRequest request = new StringRequest(Request.Method.POST,
+                    Ip.ipAdd + "/getOrderbyId.php",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+
+                            try {
+                                JSONObject res = new JSONObject(response);
+
+                                if (res.getInt("reqcode") == 1) {
 
                                     JSONObject order = res.getJSONObject("orders");
 
                                     int cust_id = order.getInt("customer_id");
 
 
-                                    List<OrderItem> orderItemList=new ArrayList<>();
+                                    List<OrderItem> orderItemList = new ArrayList<>();
 
                                     StringRequest request1 = new StringRequest(Request.Method.POST,
                                             Ip.ipAdd + "/getCustomerbyId.php",
@@ -102,22 +105,18 @@ public class MyAdapterRestaurantOrder extends RecyclerView.Adapter<MyAdapterRest
                                                         JSONObject res = new JSONObject(response);
 
                                                         if (res.getInt("reqcode") == 1) {
-                                                            JSONObject user=res.getJSONObject("user");
-                                                            holder.customer.setText(user.getString("name")+"("+user.getString("email")+")");
+                                                            JSONObject user = res.getJSONObject("user");
+                                                            holder.customer.setText(user.getString("name") + "(" + user.getString("email") + ")");
 
 
-                                                        }
-                                                        else {
+                                                        } else {
                                                             Toast.makeText(c, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
                                                         }
 
 
-                                                    }
-                                                    catch (Exception e){
+                                                    } catch (Exception e) {
 
                                                     }
-
-
 
 
                                                 }
@@ -129,7 +128,7 @@ public class MyAdapterRestaurantOrder extends RecyclerView.Adapter<MyAdapterRest
                                                     Toast.makeText(c, error.toString(), Toast.LENGTH_LONG).show();
 
                                                 }
-                                            }){
+                                            }) {
                                         @Nullable
                                         @Override
                                         protected Map<String, String> getParams() throws AuthFailureError {
@@ -146,43 +145,41 @@ public class MyAdapterRestaurantOrder extends RecyclerView.Adapter<MyAdapterRest
                                     queue1.add(request1);
 
 
-
-
-
-
-                            } else {
-                                Toast.makeText(c, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(c, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
+
                         }
-                        catch (Exception e){
-                            e.printStackTrace();
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(c, "Connection Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(c, error.toString(), Toast.LENGTH_LONG).show();
+
                         }
+                    }) {
+                @Nullable
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
 
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(c, "Connection Error", Toast.LENGTH_LONG).show();
-                        Toast.makeText(c, error.toString(), Toast.LENGTH_LONG).show();
+                    params.put("order_id", String.valueOf(orders.get(position).getId()));
 
-                    }
-                }){
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
+                    return params;
+                }
+            };
 
-                params.put("order_id", String.valueOf(orders.get(position).getId()));
+            RequestQueue queue = Volley.newRequestQueue(c);
+            queue.add(request);
 
-                return params;
-            }
-        };
+        }
+        else{
 
-        RequestQueue queue = Volley.newRequestQueue(c);
-        queue.add(request);
-
-
+        }
 
     }
 

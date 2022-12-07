@@ -1,11 +1,15 @@
 package com.project.i190426_i190435_i190660;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,6 +28,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,183 +100,297 @@ public class PreviousOrders extends AppCompatActivity {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onResume() {
         super.onResume();
 
-        StringRequest request = new StringRequest(Request.Method.POST,
-                Ip.ipAdd + "/getOrderCust.php",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
+        orders.clear();
+
+        if(Ip.isConnected(getApplicationContext())) {
+
+            StringRequest request = new StringRequest(Request.Method.POST,
+                    Ip.ipAdd + "/getOrderCust.php",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
 
 
+                            try {
+                                JSONObject res = new JSONObject(response);
 
-                        try {
-                            JSONObject res = new JSONObject(response);
-
-                            if (res.getInt("reqcode") == 1) {
-                                JSONArray myorders = res.getJSONArray("orders");
+                                if (res.getInt("reqcode") == 1) {
+                                    JSONArray myorders = res.getJSONArray("orders");
 //                                Toast.makeText(PreviousOrders.this, String.valueOf(myorders.length()), Toast.LENGTH_LONG).show();
-                                for (int i = 0; i < myorders.length(); i++) {
-                                    JSONObject order = myorders.getJSONObject(i);
-                                    int id = order.getInt("order_id");
-                                    int cust_id = order.getInt("customer_id");
-                                    double tax = order.getInt("tax");
-                                    String dateTime = order.getString("dateTime");
-                                    String status = order.getString("status");
+                                    for (int i = 0; i < myorders.length(); i++) {
+                                        JSONObject order = myorders.getJSONObject(i);
+                                        int id = order.getInt("order_id");
+                                        int cust_id = order.getInt("customer_id");
+                                        double tax = order.getInt("tax");
+                                        String dateTime = order.getString("dateTime");
+                                        String status = order.getString("status");
 
-                                    List<OrderItem> orderItemList=new ArrayList<>();
+                                        List<OrderItem> orderItemList = new ArrayList<>();
 
-                                    StringRequest request2 = new StringRequest(Request.Method.POST,
-                                            Ip.ipAdd + "/getOrderItembyId.php",
-                                            new Response.Listener<String>() {
-                                                @Override
-                                                public void onResponse(String response) {
+                                        StringRequest request2 = new StringRequest(Request.Method.POST,
+                                                Ip.ipAdd + "/getOrderItembyId.php",
+                                                new Response.Listener<String>() {
+                                                    @Override
+                                                    public void onResponse(String response) {
 
-                                                    try {
-                                                        JSONObject res = new JSONObject(response);
+                                                        try {
+                                                            JSONObject res = new JSONObject(response);
 
-                                                        if (res.getInt("reqcode") == 1) {
-                                                            JSONArray orderitems = res.getJSONArray("orderitems");
-                                                            for (int i = 0; i < orderitems.length(); i++) {
-                                                                JSONObject item = orderitems.getJSONObject(i);
+                                                            if (res.getInt("reqcode") == 1) {
+                                                                JSONArray orderitems = res.getJSONArray("orderitems");
+                                                                for (int i = 0; i < orderitems.length(); i++) {
+                                                                    JSONObject item = orderitems.getJSONObject(i);
 
-                                                                int item_id = item.getInt("product_id");
-                                                                double price = item.getDouble("price");
-                                                                int quantity = item.getInt("quantity");
+                                                                    final int a=i;
 
-                                                                StringRequest request1 = new StringRequest(Request.Method.POST,
-                                                                        Ip.ipAdd + "/getProductbyId.php",
-                                                                        new Response.Listener<String>() {
-                                                                            @Override
-                                                                            public void onResponse(String response) {
+                                                                    int item_id = item.getInt("product_id");
+                                                                    double price = item.getDouble("price");
+                                                                    int quantity = item.getInt("quantity");
 
-                                                                                System.out.println(response);
+                                                                    StringRequest request1 = new StringRequest(Request.Method.POST,
+                                                                            Ip.ipAdd + "/getProductbyId.php",
+                                                                            new Response.Listener<String>() {
+                                                                                @Override
+                                                                                public void onResponse(String response) {
 
-                                                                                try {
-                                                                                    JSONObject res = new JSONObject(response);
+                                                                                    System.out.println(response);
 
-                                                                                    if (res.getInt("reqcode") == 1) {
+                                                                                    try {
+                                                                                        JSONObject res = new JSONObject(response);
 
-                                                                                        JSONObject item = res.getJSONObject("item");
+                                                                                        if (res.getInt("reqcode") == 1) {
 
-                                                                                        Product p = new Product(item.getInt("id"),item.getString("name"), item.getDouble("price"), item.getString("description"),item.getString("photo"), item.getString("category"));
+                                                                                            JSONObject item = res.getJSONObject("item");
 
-                                                                                        orderItemList.add(new OrderItem(p, quantity, price));
+                                                                                            Product p = new Product(item.getInt("id"), item.getString("name"), item.getDouble("price"), item.getString("description"), item.getString("photo"), item.getString("category"));
+
+                                                                                            orderItemList.add(new OrderItem(p, quantity, price));
+
+                                                                                            if(a==orderitems.length()-1){
+                                                                                                Toast.makeText(PreviousOrders.this, String.valueOf(orderItemList.size()), Toast.LENGTH_SHORT).show();
+                                                                                                orders.add(new Order(id, orderItemList, dateTime, tax, status));
+                                                                                                adapter.notifyDataSetChanged();
+                                                                                            }
 
 
-                                                                                    } else {
-                                                                                        Toast.makeText(PreviousOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+
+
+                                                                                        } else {
+                                                                                            Toast.makeText(PreviousOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                                                                                        }
+                                                                                    } catch (Exception e) {
+
                                                                                     }
+
+
                                                                                 }
-                                                                                catch (Exception e){
+                                                                            },
+                                                                            new Response.ErrorListener() {
+                                                                                @Override
+                                                                                public void onErrorResponse(VolleyError error) {
+                                                                                    Toast.makeText(PreviousOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
+                                                                                    Toast.makeText(PreviousOrders.this, error.toString(), Toast.LENGTH_LONG).show();
 
                                                                                 }
+                                                                            }) {
+                                                                        @Nullable
+                                                                        @Override
+                                                                        protected Map<String, String> getParams() throws AuthFailureError {
+                                                                            Map<String, String> params = new HashMap<>();
+
+                                                                            params.put("id", String.valueOf(item_id));
+
+                                                                            return params;
+                                                                        }
+                                                                    };
+
+                                                                    RequestQueue queue1 = Volley.newRequestQueue(PreviousOrders.this);
+                                                                    queue1.add(request1);
+
+
+                                                                }
 
 
 
-
-                                                                            }
-                                                                        },
-                                                                        new Response.ErrorListener() {
-                                                                            @Override
-                                                                            public void onErrorResponse(VolleyError error) {
-                                                                                Toast.makeText(PreviousOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
-                                                                                Toast.makeText(PreviousOrders.this, error.toString(), Toast.LENGTH_LONG).show();
-
-                                                                            }
-                                                                        }){
-                                                                    @Nullable
-                                                                    @Override
-                                                                    protected Map<String, String> getParams() throws AuthFailureError {
-                                                                        Map<String, String> params = new HashMap<>();
-
-                                                                        params.put("id", String.valueOf(item_id));
-
-                                                                        return params;
-                                                                    }
-                                                                };
-
-                                                                RequestQueue queue1 = Volley.newRequestQueue(PreviousOrders.this);
-                                                                queue1.add(request1);
-
+                                                            } else {
+                                                                Toast.makeText(PreviousOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
 
 
                                                             }
-                                                            orders.add(new Order(id, orderItemList, dateTime, tax, status));
-                                                            adapter.notifyDataSetChanged();
-                                                        }
-                                                        else{
-                                                            Toast.makeText(PreviousOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
 
-
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
                                                         }
 
-                                                    } catch (JSONException e) {
-                                                        e.printStackTrace();
                                                     }
+                                                },
+                                                new Response.ErrorListener() {
+                                                    @Override
+                                                    public void onErrorResponse(VolleyError error) {
+                                                        Toast.makeText(PreviousOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(PreviousOrders.this, error.toString(), Toast.LENGTH_LONG).show();
 
-                                                }
-                                            },
-                                            new Response.ErrorListener() {
-                                                @Override
-                                                public void onErrorResponse(VolleyError error) {
-                                                    Toast.makeText(PreviousOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
-                                                    Toast.makeText(PreviousOrders.this, error.toString(), Toast.LENGTH_LONG).show();
+                                                    }
+                                                }) {
+                                            @Nullable
+                                            @Override
+                                            protected Map<String, String> getParams() throws AuthFailureError {
+                                                Map<String, String> params = new HashMap<>();
 
-                                                }
-                                            }){
-                                        @Nullable
-                                        @Override
-                                        protected Map<String, String> getParams() throws AuthFailureError {
-                                            Map<String, String> params = new HashMap<>();
+                                                params.put("order_id", String.valueOf(id));
 
-                                            params.put("order_id", String.valueOf(id));
+                                                return params;
+                                            }
+                                        };
 
-                                            return params;
-                                        }
-                                    };
-
-                                    RequestQueue queue2 = Volley.newRequestQueue(PreviousOrders.this);
-                                    queue2.add(request2);
+                                        RequestQueue queue2 = Volley.newRequestQueue(PreviousOrders.this);
+                                        queue2.add(request2);
 
 
+                                    }
 
 
+                                } else {
+                                    Toast.makeText(PreviousOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
                                 }
-
-                            } else {
-                                Toast.makeText(PreviousOrders.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
+
                         }
-                        catch (Exception e){
-                            e.printStackTrace();
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(PreviousOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(PreviousOrders.this, error.toString(), Toast.LENGTH_LONG).show();
+
                         }
+                    }) {
+                @Nullable
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
 
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(PreviousOrders.this, "Connection Error", Toast.LENGTH_LONG).show();
-                        Toast.makeText(PreviousOrders.this, error.toString(), Toast.LENGTH_LONG).show();
+                    params.put("customer_id", String.valueOf(mPref.getInt("id", 0)));
 
-                    }
-                }){
-            @Nullable
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
+                    return params;
+                }
+            };
 
-                params.put("customer_id", String.valueOf(mPref.getInt("id", 0)));
+            RequestQueue queue = Volley.newRequestQueue(PreviousOrders.this);
+            queue.add(request);
+        }
+        else{
+            loadfromSqlite();
+        }
 
-                return params;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void loadfromSqlite(){
+
+        MyDBHelper helper= new MyDBHelper(PreviousOrders.this);
+        SQLiteDatabase db= helper.getReadableDatabase();
+        String[] cols= {MyProject.MyOrder._ID,
+                MyProject.MyOrder._CUST_ID,
+                MyProject.MyOrder._DATETIME,
+                MyProject.MyOrder._TAX,
+                MyProject.MyOrder._STATUS};
+        Cursor c=db.query(
+                MyProject.MyOrder.TABLE_NAME,
+                cols,
+                MyProject.MyOrder._CUST_ID+"="+mPref.getInt("id", 0),
+                null,
+                null,
+                null,
+                MyProject.MyOrder._ID+" DESC"
+        );
+        while(c.moveToNext()){
+            int a1= c.getColumnIndex(MyProject.MyOrder._ID);
+            int a1_2 = c.getColumnIndex(MyProject.MyOrder._DATETIME);
+            int a1_3 = c.getColumnIndex(MyProject.MyOrder._TAX);
+            int a1_4 = c.getColumnIndex(MyProject.MyOrder._STATUS);
+
+
+            List<OrderItem> orderitems=new ArrayList<>();
+
+            MyDBHelper helper1= new MyDBHelper(PreviousOrders.this);
+            SQLiteDatabase db1= helper1.getReadableDatabase();
+            String[] cols1= {MyProject.MyOrderItem._ID,
+                    MyProject.MyOrderItem.ORDER_ID,
+                    MyProject.MyOrderItem.ITEM_ID,
+                    MyProject.MyOrderItem._QUANTITY,
+                    MyProject.MyOrderItem._PRICE};
+            Cursor c1=db1.query(
+                    MyProject.MyOrderItem.TABLE_NAME,
+                    cols1,
+                    MyProject.MyOrderItem.ORDER_ID+"="+c.getInt(a1),
+                    null,
+                    null,
+                    null,
+                    MyProject.MyOrderItem.ORDER_ID+" DESC"
+            );
+            while(c1.moveToNext()){
+                int a2= c1.getColumnIndex(MyProject.MyOrderItem.ITEM_ID);
+                int a3= c1.getColumnIndex(MyProject.MyOrderItem._QUANTITY);
+                int a4= c1.getColumnIndex(MyProject.MyOrderItem._PRICE);
+
+
+                MyDBHelper helper2= new MyDBHelper(PreviousOrders.this);
+                SQLiteDatabase db2= helper2.getReadableDatabase();
+                String[] cols2= {MyProject.MyProducts._ID,
+                        MyProject.MyProducts._NAME,
+                        MyProject.MyProducts._PRICE,
+                        MyProject.MyProducts._CATEGORY,
+                        MyProject.MyProducts._DESCRIPTION,
+                        MyProject.MyProducts._PHOTO};
+                Cursor c2=db2.query(
+                        MyProject.MyProducts.TABLE_NAME,
+                        cols2,
+                        "id="+c1.getInt(a2),
+                        null,
+                        null,
+                        null,
+                        MyProject.MyProducts._ID+" DESC"
+                );
+                while(c2.moveToNext()){
+                    int a11= c2.getColumnIndex(MyProject.MyProducts._ID);
+                    int a12= c2.getColumnIndex(MyProject.MyProducts._NAME);
+                    int a13= c2.getColumnIndex(MyProject.MyProducts._PRICE);
+                    int a14= c2.getColumnIndex(MyProject.MyProducts._CATEGORY);
+                    int a15= c2.getColumnIndex(MyProject.MyProducts._DESCRIPTION);
+                    int a16= c2.getColumnIndex(MyProject.MyProducts._PHOTO);
+
+                    final String imageData=Base64.getEncoder().encodeToString(c2.getBlob(a16));
+
+                    Product p=new Product(c2.getInt(a11), c2.getString(a12), c2.getDouble(a13), c2.getString(a15), imageData , c2.getString(a14));
+
+                    orderitems.add(new OrderItem(p, c1.getInt(a3), c1.getDouble(a4)));
+
+
+
+
+                }
+
+                orders.add(new Order(c.getInt(a1),orderitems, c.getString(a1_2), c.getInt(a1_3), c.getString(a1_4)));
+
+                adapter.notifyDataSetChanged();
+
+
+
+
             }
-        };
 
-        RequestQueue queue = Volley.newRequestQueue(PreviousOrders.this);
-        queue.add(request);
+
+
+
+        }
 
     }
 }
