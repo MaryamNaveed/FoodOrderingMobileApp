@@ -5,7 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 public class Ip {
-    public static String ipAdd="http://192.168.10.5/finalProject";
+    public static String ipAdd="http://192.168.10.3/finalProject";
 
     public static  boolean isConnected(Context c){
         ConnectivityManager cm = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);

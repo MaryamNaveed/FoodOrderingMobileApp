@@ -421,6 +421,8 @@ public class RestaurantOrders extends AppCompatActivity {
         if(present==false){
             placeOrderToSqlite(o.getId(), o.getDate(), o.getTax(), o.getStatus(), cust);
 
+//            Toast.makeText(RestaurantOrders.this, String.valueOf(o.getOrderItemList().size()), Toast.LENGTH_LONG).show();
+
             for (int i=0; i<o.getOrderItemList().size(); i++){
                 addOrderItemtoSqlite(o.getId(), o.getOrderItemList().get(i));
             }
