@@ -466,4 +466,47 @@ public class Profile extends AppCompatActivity {
 
         helper.close();
     }
+
+    public void insertCustomerToSqlite(){
+
+        boolean present=false;
+
+        MyDBHelper helper1= new MyDBHelper(Profile.this);
+        SQLiteDatabase db1= helper1.getReadableDatabase();
+        String[] cols= { MyProject.MyCustomer._ID,
+                MyProject.MyCustomer._NAME,
+                MyProject.MyCustomer._EMAIL,
+                MyProject.MyCustomer._PHONE};
+        Cursor c1=db1.query(
+                MyProject.MyCustomer.TABLE_NAME,
+                cols,
+                MyProject.MyCustomer._ID+"="+mPref.getInt("id", 0),
+                null,
+                null,
+                null,
+                MyProject.MyCustomer._ID+" DESC"
+        );
+        while(c1.moveToNext()){
+            present=true;
+        }
+        if(present==false){
+            int myid=mPref.getInt("id", 0);
+
+                MyDBHelper helper = new MyDBHelper(Profile.this);
+                SQLiteDatabase db = helper.getWritableDatabase();
+
+                ContentValues cv = new ContentValues();
+
+                cv.put(MyProject.MyCustomer._ID, myid);
+                cv.put(MyProject.MyCustomer._NAME,name.getText().toString());
+                cv.put(MyProject.MyCustomer._EMAIL,email.getText().toString());
+                cv.put(MyProject.MyCustomer._PHONE,phone.getText().toString());
+
+            db.insert(MyProject.MyCustomer.TABLE_NAME, null, cv);
+
+            helper.close();
+
+        }
+
+    }
 }

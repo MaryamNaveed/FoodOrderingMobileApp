@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -174,7 +175,11 @@ public class PreviousOrders extends AppCompatActivity {
                                                                                             if(a==orderitems.length()-1){
                                                                                                 Toast.makeText(PreviousOrders.this, String.valueOf(orderItemList.size()), Toast.LENGTH_SHORT).show();
                                                                                                 orders.add(new Order(id, orderItemList, dateTime, tax, status));
+                                                                                                Order o = new Order(id, orderItemList, dateTime, tax, status);
+
+
                                                                                                 adapter.notifyDataSetChanged();
+                                                                                                checkOrderinSqlite(o);
                                                                                             }
 
 
@@ -378,19 +383,88 @@ public class PreviousOrders extends AppCompatActivity {
 
                 }
 
-                orders.add(new Order(c.getInt(a1),orderitems, c.getString(a1_2), c.getInt(a1_3), c.getString(a1_4)));
 
-                adapter.notifyDataSetChanged();
+
 
 
 
 
             }
 
+            orders.add(new Order(c.getInt(a1),orderitems, c.getString(a1_2), c.getInt(a1_3), c.getString(a1_4)));
 
+            adapter.notifyDataSetChanged();
 
 
         }
+
+    }
+
+    public void checkOrderinSqlite(Order o) {
+
+        boolean present = false;
+
+        MyDBHelper helper1= new MyDBHelper(PreviousOrders.this);
+        SQLiteDatabase db1= helper1.getReadableDatabase();
+        String[] cols= { MyProject.MyOrder._ID,
+                MyProject.MyOrder._CUST_ID,
+                MyProject.MyOrder._DATETIME,
+                MyProject.MyOrder._STATUS,
+                MyProject.MyOrder._TAX};
+        Cursor c1=db1.query(
+                MyProject.MyOrder.TABLE_NAME,
+                cols,
+                MyProject.MyOrder._ID+"="+o.getId(),
+                null,
+                null,
+                null,
+                MyProject.MyOrder._ID+" DESC"
+        );
+        while(c1.moveToNext()){
+            present=true;
+        }
+
+        if(present==false){
+            placeOrderToSqlite(o.getId(), o.getDate(), o.getTax(), o.getStatus());
+
+            for (int i=0; i<o.getOrderItemList().size(); i++){
+                addOrderItemtoSqlite(o.getId(), o.getOrderItemList().get(i));
+            }
+
+        }
+    }
+
+    public void placeOrderToSqlite(int id, String dateTime, double taxCal, String st){
+
+
+        MyDBHelper helper = new MyDBHelper(PreviousOrders.this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(MyProject.MyOrder._ID, id);
+        cv.put(MyProject.MyOrder._CUST_ID, mPref.getInt("id", 0));
+        cv.put(MyProject.MyOrder._DATETIME, dateTime);
+        cv.put(MyProject.MyOrder._TAX, taxCal);
+        cv.put(MyProject.MyOrder._STATUS, st);
+        db.insert(MyProject.MyOrder.TABLE_NAME, null, cv);
+
+        helper.close();
+
+    }
+
+    public void addOrderItemtoSqlite(int orderid, OrderItem c){
+        MyDBHelper helper = new MyDBHelper(PreviousOrders.this);
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        ContentValues cv = new ContentValues();
+        cv.put(MyProject.MyOrderItem.ORDER_ID, orderid);
+        cv.put(MyProject.MyOrderItem.ITEM_ID, c.getP().getId());
+        cv.put(MyProject.MyOrderItem._QUANTITY, c.getQuantity());
+        cv.put(MyProject.MyOrderItem._PRICE, c.getPrice());
+
+        db.insert(MyProject.MyOrderItem.TABLE_NAME, null, cv);
+
+        helper.close();
 
     }
 }

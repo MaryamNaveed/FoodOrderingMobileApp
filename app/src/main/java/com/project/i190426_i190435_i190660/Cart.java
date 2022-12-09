@@ -430,6 +430,7 @@ public class Cart extends AppCompatActivity {
                                                                 calculatePrice();
 
                                                                 adapter.notifyDataSetChanged();
+                                                                checkinSqlite(p, qq);
 
 
                                                             } else {
@@ -577,6 +578,43 @@ public class Cart extends AppCompatActivity {
         }
     }
 
+    public void checkinSqlite(Product product, int quantity){
+
+        boolean present=false;
+
+        MyDBHelper helper1= new MyDBHelper(Cart.this);
+        SQLiteDatabase db1= helper1.getReadableDatabase();
+        String[] cols= { MyProject.MyCart.ITEM_ID,
+                MyProject.MyCart.CUST_ID,
+                MyProject.MyCart.QUANTITY};
+        Cursor c1=db1.query(
+                MyProject.MyCart.TABLE_NAME,
+                cols,
+                MyProject.MyCart.ITEM_ID+"="+product.getId()+" and "+MyProject.MyCart.CUST_ID+"="+mPref.getInt("id", 0),
+                null,
+                null,
+                null,
+                MyProject.MyCart.ITEM_ID+" DESC"
+        );
+        while(c1.moveToNext()){
+            present=true;
+        }
+
+        if(present==false) {
+            MyDBHelper helper = new MyDBHelper(Cart.this);
+            SQLiteDatabase db = helper.getWritableDatabase();
+
+            ContentValues cv = new ContentValues();
+            cv.put(MyProject.MyCart.CUST_ID, mPref.getInt("id", 0));
+            cv.put(MyProject.MyCart.ITEM_ID, product.getId());
+            cv.put(MyProject.MyCart.QUANTITY, quantity);
+            db.insert(MyProject.MyCart.TABLE_NAME, null, cv);
+
+            helper.close();
+        }
+
+    }
+
     public void pushOrderNotification(String notif) {
 
         StringRequest request1 = new StringRequest(Request.Method.POST,
@@ -697,7 +735,7 @@ public class Cart extends AppCompatActivity {
                                             public void onFailure(JSONObject jsonObject) {
 //                                            Toast.makeText(Cart.this, "Error Sending Notification", Toast.LENGTH_LONG).show();
 //                                            Toast.makeText(Cart.this, jsonObject.toString(), Toast.LENGTH_LONG).show();
-                                                System.out.println(jsonObject.toString());
+                                                System.out.println("Error: "+jsonObject.toString());
 
                                             }
                                         });

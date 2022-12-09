@@ -3,8 +3,11 @@ package com.project.i190426_i190435_i190660;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
@@ -110,6 +113,7 @@ public class LoginCustomer extends AppCompatActivity {
                                                                                         editmPref.putInt("id", idUser);
                                                                                         editmPref.apply();
                                                                                         editmPref.commit();
+                                                                                        insertCustomerToSqlite();
                                                                                         Intent intent=new Intent(LoginCustomer.this, MainPageCustomer.class);
                                                                                         startActivity(intent);
                                                                                         finish();
@@ -265,5 +269,101 @@ public class LoginCustomer extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void insertCustomerToSqlite(){
+
+        boolean present=false;
+
+        MyDBHelper helper1= new MyDBHelper(LoginCustomer.this);
+        SQLiteDatabase db1= helper1.getReadableDatabase();
+        String[] cols= { MyProject.MyCustomer._ID,
+                MyProject.MyCustomer._NAME,
+                MyProject.MyCustomer._EMAIL,
+                MyProject.MyCustomer._PHONE};
+        Cursor c1=db1.query(
+                MyProject.MyCustomer.TABLE_NAME,
+                cols,
+                MyProject.MyCustomer._ID+"="+mPref.getInt("id", 0),
+                null,
+                null,
+                null,
+                MyProject.MyCustomer._ID+" DESC"
+        );
+        while(c1.moveToNext()){
+            present=true;
+        }
+        if(present==false){
+            int myid=mPref.getInt("id", 0);
+
+            StringRequest request1 = new StringRequest(Request.Method.POST,
+                    Ip.ipAdd + "/getCustomerbyId.php",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+
+                            try {
+
+                                JSONObject res = new JSONObject(response);
+
+                                if (res.getInt("reqcode") == 1) {
+                                    JSONObject user = res.getJSONObject("user");
+
+                                    MyDBHelper helper = new MyDBHelper(LoginCustomer.this);
+                                    SQLiteDatabase db = helper.getWritableDatabase();
+
+                                    ContentValues cv = new ContentValues();
+
+                                    cv.put(MyProject.MyCustomer._ID, myid);
+                                    cv.put(MyProject.MyCustomer._NAME,user.getString("name"));
+                                    cv.put(MyProject.MyCustomer._EMAIL,user.getString("email"));
+                                    cv.put(MyProject.MyCustomer._PHONE,user.getString("phone"));
+
+
+                                    db.insert(MyProject.MyCustomer.TABLE_NAME, null, cv);
+
+                                    helper.close();
+
+
+                                } else {
+                                    Toast.makeText(LoginCustomer.this, res.get("reqmsg").toString(), Toast.LENGTH_LONG).show();
+                                }
+
+
+                            } catch (Exception e) {
+
+                            }
+
+
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(LoginCustomer.this, "Connection Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginCustomer.this, error.toString(), Toast.LENGTH_LONG).show();
+
+                        }
+                    }) {
+                @Nullable
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+
+
+                    params.put("id", String.valueOf(mPref.getInt("id", 0)));
+
+                    return params;
+                }
+            };
+
+            RequestQueue queue1 = Volley.newRequestQueue(LoginCustomer.this);
+            queue1.add(request1);
+
+
+
+
+        }
+
     }
 }
